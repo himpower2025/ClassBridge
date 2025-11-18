@@ -1,0 +1,7 @@
+{
+  "name": "ClassBridge",
+  "description": "Connecting your school community.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}

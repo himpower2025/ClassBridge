@@ -9,7 +9,13 @@
     <link rel="manifest" href="manifest.json" />
     <!-- Theme color for browser UI -->
     <meta name="theme-color" content="#4A90E2" />
-    <script type="module" src="index.tsx" defer></script>
+    
+    <!-- ADD BABEL FOR LIVE JSX/TSX TRANSFORMATION -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- CHANGE SCRIPT TYPE TO text/babel -->
+    <script type="text/babel" src="index.tsx" defer></script>
+    
   <script type="importmap">
 {
   "imports": {

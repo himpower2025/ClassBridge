@@ -200,6 +200,8 @@ const mockUserRegistry: Record<string, Omit<UserRegistryEntry, 'email'> | Omit<U
     'aarav.sharma@example.com': { userId: 12, role: 'Student', schoolId: 'eis' },
     'prakash.sharma@gmail.com': { userId: 212, role: 'Parent', schoolId: 'eis' },
     'mrs.thapa@eis.edu.np': { userId: 107, role: 'Teacher', schoolId: 'eis' },
+    // FIX: Add user registry entry for student with ID 13 to ensure data consistency.
+    'zoe.r@example.com': { userId: 13, role: 'Student', schoolId: 'his' },
     // --- NEW MULTI-SCHOOL USERS ---
     'teacher.multi@example.com': [
         { userId: 105, role: 'Teacher', schoolId: 'ea' },
@@ -287,6 +289,8 @@ interface Teacher extends User {
 
 interface Child extends User {
   role: 'Student';
+  // FIX: Add email property to Child interface to resolve type errors.
+  email: string;
   parentId: number;
   grade: string;
   teacher: string;
@@ -313,6 +317,7 @@ const mockInitialChildren: Child[] = [
   {
     id: 1,
     name: 'Alex Kim',
+    email: 'alex.kim@example.com',
     role: 'Student',
     parentId: 201,
     grade: 'Grade 5',
@@ -335,6 +340,7 @@ const mockInitialChildren: Child[] = [
   {
     id: 2,
     name: 'Emily Park',
+    email: 'emily.park@example.com',
     role: 'Student',
     parentId: 202,
     grade: 'Grade 7',
@@ -355,6 +361,7 @@ const mockInitialChildren: Child[] = [
   {
     id: 3,
     name: 'Liam Chen',
+    email: 'liam.chen@example.com',
     role: 'Student',
     parentId: 203,
     grade: 'Grade 5',
@@ -377,6 +384,7 @@ const mockInitialChildren: Child[] = [
   {
     id: 4,
     name: 'Olivia Garcia',
+    email: 'olivia.garcia@example.com',
     role: 'Student',
     parentId: 204,
     grade: 'Grade 5',
@@ -399,6 +407,7 @@ const mockInitialChildren: Child[] = [
   {
     id: 5,
     name: 'Noah Rodriguez',
+    email: 'noah.r@example.com',
     role: 'Student',
     parentId: 205,
     grade: 'Grade 5',
@@ -421,6 +430,7 @@ const mockInitialChildren: Child[] = [
   {
     id: 6,
     name: 'Sophia Miller',
+    email: 'sophia.miller@example.com',
     role: 'Student',
     parentId: 206,
     grade: 'Grade 5',
@@ -442,28 +452,28 @@ const mockInitialChildren: Child[] = [
   },
    // New secondary students
   {
-    id: 7, name: 'Rohan Sharma', role: 'Student', parentId: 207, grade: 'Grade 7', teacher: 'Mr. Lee',
+    id: 7, name: 'Rohan Sharma', email: 'rohan.sharma@example.com', role: 'Student', parentId: 207, grade: 'Grade 7', teacher: 'Mr. Lee',
     grades: [{ subject: 'English', score: 'B+' }, { subject: 'Geography', score: 'A-' }],
     attendance: { present: 89, tardy: 1, absent: 0 }, timetable: [],
   },
   {
-    id: 8, name: 'Priya Patel', role: 'Student', parentId: 208, grade: 'Grade 7', teacher: 'Mr. Lee',
+    id: 8, name: 'Priya Patel', email: 'priya.patel@example.com', role: 'Student', parentId: 208, grade: 'Grade 7', teacher: 'Mr. Lee',
     grades: [{ subject: 'English', score: 'A' }, { subject: 'Geography', score: 'B' }],
     attendance: { present: 87, tardy: 2, absent: 1 }, timetable: [],
   },
   {
-    id: 9, name: 'Sanjay Gupta', role: 'Student', parentId: 209, grade: 'Grade 8', teacher: 'Mr. Kumar',
+    id: 9, name: 'Sanjay Gupta', email: 'sanjay.gupta@example.com', role: 'Student', parentId: 209, grade: 'Grade 8', teacher: 'Mr. Kumar',
     grades: [{ subject: 'Science', score: 'A-' }, { subject: 'Math', score: 'B+' }],
     attendance: { present: 90, tardy: 0, absent: 0 }, timetable: [],
   },
   {
-    id: 10, name: 'Anjali Singh', role: 'Student', parentId: 210, grade: 'Grade 8', teacher: 'Mr. Kumar',
+    id: 10, name: 'Anjali Singh', email: 'anjali.singh@example.com', role: 'Student', parentId: 210, grade: 'Grade 8', teacher: 'Mr. Kumar',
     grades: [{ subject: 'Science', score: 'B' }, { subject: 'Math', score: 'C+' }],
     attendance: { present: 85, tardy: 4, absent: 1 }, timetable: [],
   },
     // Life-Prep Academy student
   {
-    id: 11, name: 'Ben Carter', role: 'Student', parentId: 211, grade: 'Grade 11', teacher: 'Dr. Wallace',
+    id: 11, name: 'Ben Carter', email: 'ben.carter@lpa.edu', role: 'Student', parentId: 211, grade: 'Grade 11', teacher: 'Dr. Wallace',
     grades: [
         { subject: 'AP Calculus BC', score: 'A' }, 
         { subject: 'AP Physics C', score: 'A-' },
@@ -487,7 +497,7 @@ const mockInitialChildren: Child[] = [
   },
   // New student for Everest International School
   {
-    id: 12, name: 'Aarav Sharma', role: 'Student', parentId: 212, grade: 'Grade 3', teacher: 'Mrs. Thapa',
+    id: 12, name: 'Aarav Sharma', email: 'aarav.sharma@example.com', role: 'Student', parentId: 212, grade: 'Grade 3', teacher: 'Mrs. Thapa',
     grades: [
         { subject: 'Nepali', score: 'A' },
         { subject: 'Mathematics', score: 'B+' },
@@ -504,6 +514,7 @@ const mockInitialChildren: Child[] = [
   {
     id: 13,
     name: 'Zoe Rodriguez',
+    email: 'zoe.r@example.com',
     role: 'Student',
     parentId: 213,
     grade: 'Grade 7',
@@ -1335,8 +1346,16 @@ const ParentDashboard: React.FC<{
 }> = ({ parent, school, allChildren, notifications, reportCards, tuitionInvoices, userAffiliations, onUpdateNotifications, onUpdateTuition, onSwitchSchool, onLogout }) => {
     const [selectedChild, setSelectedChild] = useState<Child | null>(null);
     const [activeTab, setActiveTab] = useState<ParentTab>('Children');
+    
     // Filter children to show only those in the currently selected school
-    const myChildren = allChildren.filter(child => parent.childrenIds.includes(child.id) && completeUserRegistry[child.email.toLowerCase()][0].schoolId === school.id);
+    const myChildren = allChildren.filter(child => {
+        if (!parent.childrenIds.includes(child.id)) {
+            return false;
+        }
+        const affiliation = completeUserRegistry[child.email.toLowerCase()];
+        // Ensure the child has a valid school affiliation in the registry before checking schoolId
+        return affiliation && affiliation.length > 0 && affiliation[0].schoolId === school.id;
+    });
 
     if (selectedChild) {
         const childsInvoices = tuitionInvoices.filter(inv => inv.studentId === selectedChild.id);

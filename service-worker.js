@@ -1,4 +1,5 @@
-const CACHE_NAME = 'classbridge-cache-v2';
+
+const CACHE_NAME = 'classbridge-cache-v4';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -8,17 +9,18 @@ const urlsToCache = [
 ];
 
 self.addEventListener('install', event => {
+  // Perform install steps
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
-        console.log('Opened cache and caching assets');
+        console.log('Opened cache');
         return cache.addAll(urlsToCache);
       })
+      .then(() => self.skipWaiting()) // Force the waiting service worker to become the active service worker
   );
 });
 
 self.addEventListener('fetch', event => {
-  // Network-first, then cache fallback strategy
   event.respondWith(
     fetch(event.request)
       .then(response => {
@@ -27,12 +29,7 @@ self.addEventListener('fetch', event => {
           return response;
         }
 
-        // IMPORTANT: Clone the response. A response is a stream
-        // and because we want the browser to consume the response
-        // as well as the cache consuming the response, we need
-        // to clone it so we have two streams.
         const responseToCache = response.clone();
-
         caches.open(CACHE_NAME)
           .then(cache => {
             cache.put(event.request, responseToCache);
@@ -41,7 +38,6 @@ self.addEventListener('fetch', event => {
         return response;
       })
       .catch(() => {
-        // Network request failed, try to get it from the cache.
         return caches.match(event.request);
       })
   );
@@ -54,11 +50,11 @@ self.addEventListener('activate', event => {
       return Promise.all(
         cacheNames.map(cacheName => {
           if (cacheWhitelist.indexOf(cacheName) === -1) {
-            console.log('Deleting old cache:', cacheName);
+             console.log('Deleting old cache:', cacheName);
             return caches.delete(cacheName);
           }
         })
       );
-    })
+    }).then(() => self.clients.claim()) // Become available to all pages
   );
 });

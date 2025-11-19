@@ -1,3 +1,4 @@
+
 // Ensure we are using the global React/ReactDOM variables loaded via UMD in index.html
 const React = (window as any).React;
 const ReactDOM = (window as any).ReactDOM;
@@ -10,85 +11,24 @@ console.log("ClassBridge App Starting... React Version:", React.version);
 
 type Role = 'Student' | 'Parent' | 'Teacher' | 'Administrator';
 
-// --- NEW LOGO COMPONENT (CONCEPT 2: THE SPARK OF CONNECTION) ---
-const ClassBridgeLogo = ({ size = 48 }) => {
-    const svgRef = useRef(null);
-
-    const handleDownload = () => {
-        if (!svgRef.current) return;
-
-        // Get computed colors from CSS variables
-        const computedStyles = getComputedStyle(document.documentElement);
-        const primaryColor = computedStyles.getPropertyValue('--primary-color').trim();
-        const secondaryColor = computedStyles.getPropertyValue('--secondary-color').trim();
-        
-        // Clone the node to avoid modifying the one in the DOM
-        const svgNode = svgRef.current.cloneNode(true);
-        
-        // Remove classes and interactive attributes for a clean, self-contained SVG file
-        svgNode.removeAttribute('class');
-        svgNode.removeAttribute('style');
-        svgNode.removeAttribute('aria-label');
-        svgNode.removeAttribute('role');
-        svgNode.removeAttribute('tabindex');
-        
-        // Find each group and inline the color
-        const entities = svgNode.querySelector('.entities');
-        if (entities) {
-            entities.removeAttribute('class');
-            entities.setAttribute('stroke', primaryColor);
-        }
-
-        const spark = svgNode.querySelector('.spark');
-        if (spark) {
-            spark.removeAttribute('class');
-            spark.setAttribute('fill', secondaryColor);
-        }
-
-        const serializer = new XMLSerializer();
-        // Add XML declaration for better compatibility
-        const svgString = '<?xml version="1.0" standalone="no"?>\r\n' + serializer.serializeToString(svgNode);
-
-        const blob = new Blob([svgString], { type: 'image/svg+xml' });
-        const url = URL.createObjectURL(blob);
-
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'classbridge-logo-spark.svg';
-        document.body.appendChild(a);
-        a.click();
-        
-        // Cleanup
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-    };
+// --- UPDATED LOGO COMPONENT (Uses PNG from Manifest) ---
+const ClassBridgeLogo = ({ size = 64 }) => {
+    // Use the high-quality PNG from the manifest
+    const logoUrl = "https://storage.googleapis.com/maker-studio-project-media-prod/media/20240502111105151528-5e2ea7a6c9e9.png";
     
     return (
-        <svg 
-            ref={svgRef}
-            width={size} 
-            height={size} 
-            viewBox="0 0 100 100" 
-            xmlns="http://www.w3.org/2000/svg" 
-            className="classbridge-logo downloadable"
-            aria-label="ClassBridge Logo, click to download"
-            onClick={handleDownload}
-            role="button"
-            tabIndex={0}
-            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleDownload(); } }}
-        >
-            <title>Download Logo as SVG</title>
-            {/* School and Home entities */}
-            <g className="entities" strokeWidth="9" strokeLinecap="round" fill="none">
-                <path d="M20 20 C 40 50, 40 50, 20 80" />
-                <path d="M80 80 C 60 50, 60 50, 80 20" />
-            </g>
-            
-            {/* The Spark of Connection */}
-            <g className="spark">
-                <path d="M50 38 L56 50 L50 62 L44 50 Z" />
-            </g>
-        </svg>
+        <img 
+            src={logoUrl} 
+            alt="ClassBridge Logo" 
+            className="classbridge-logo"
+            style={{ 
+                width: size, 
+                height: size, 
+                objectFit: 'contain',
+                borderRadius: '12px',
+                display: 'block' // Removes inline spacing issues
+            }} 
+        />
     );
 };
 
@@ -98,7 +38,7 @@ const SchoolLogo = ({ logoUrl, schoolName }) => {
         return <img src={logoUrl} alt={`${schoolName} Logo`} className="school-logo-image" />;
     }
     // Fallback to the generic ClassBridge logo if no specific URL is provided
-    return <ClassBridgeLogo />;
+    return <ClassBridgeLogo size={40} />;
 };
 
 
@@ -733,7 +673,7 @@ const MagicLinkLogin = ({ onLogin }) => {
              <div className="login-header">
                 {/* ADDED LOGO HERE */}
                 <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
-                    <ClassBridgeLogo size={64} />
+                    <ClassBridgeLogo size={100} />
                 </div>
                 <h2>{
                     step === 'identify' ? "Welcome to ClassBridge" : 
@@ -1747,10 +1687,10 @@ const TeacherDashboard = ({ teacher, school, allChildren, notifications, userAff
 };
 
 // --- STUDENT DASHBOARD COMPONENTS ---
-const StudentTimetableView = ({ timetable }) => {
+const StudentTimetableView = ({ timetable }: { timetable: TimetableEntry[] }) => {
     const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
     const entriesByDay = days.reduce((acc: Record<string, TimetableEntry[]>, day) => {
-        const dayEntries = (timetable as TimetableEntry[]).filter(entry => entry.day === day).sort((a,b) => a.time.localeCompare(b.time));
+        const dayEntries = timetable.filter(entry => entry.day === day).sort((a,b) => a.time.localeCompare(b.time));
         if (dayEntries.length > 0) {
             acc[day] = dayEntries;
         }
@@ -1763,11 +1703,12 @@ const StudentTimetableView = ({ timetable }) => {
             <div className="timetable-view">
                  {Object.entries(entriesByDay).map(([day, entries]) => {
                     const currentEntries = entries as TimetableEntry[];
+                    const dayKey = day as string;
                     return (
-                        <div key={day} className="timetable-day">
-                            <h4>{day}</h4>
+                        <div key={dayKey} className="timetable-day">
+                            <h4>{dayKey}</h4>
                             <ul>
-                                {currentEntries.map((entry, index) => (
+                                {currentEntries.map((entry, index: number) => (
                                     <li key={index} className="timetable-entry">
                                         <span className="entry-time">{entry.time}</span>
                                         <div className="entry-details">

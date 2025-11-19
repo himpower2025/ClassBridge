@@ -1,3 +1,4 @@
+
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
 
 :root {
@@ -139,6 +140,28 @@ main.full-height-main {
     border-top: 5px solid var(--primary-color); 
     transition: border-top-color 0.4s ease;
     width: 100%;
+    box-sizing: border-box;
+}
+
+/* Mobile responsive styles for login */
+@media (max-width: 600px) {
+    .universal-login-container {
+        width: 92%; /* Slightly wider on mobile */
+        margin-top: 1rem; /* Reduced top margin */
+        padding: 1.5rem 1rem; /* Reduce side padding */
+        box-shadow: 0 2px 8px var(--shadow-color); /* Softer shadow for mobile */
+    }
+    .login-header h2 {
+        font-size: 1.4rem; /* Slightly smaller header */
+    }
+    .login-form .form-group input {
+        padding: 0.9rem; /* Comfortable touch target */
+        font-size: 16px; /* Prevent zoom on iOS */
+    }
+    .classbridge-logo {
+        width: 80px !important; /* Smaller logo on mobile */
+        height: 80px !important;
+    }
 }
 
 .login-header {

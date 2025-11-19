@@ -1,7 +1,3 @@
-const React = (window as any).React;
-const ReactDOM = (window as any).ReactDOM;
-const { useState, useEffect, useRef } = React;
-const { createRoot } = ReactDOM;
 // Ensure we are using the global React/ReactDOM variables loaded via UMD in index.html
 const React = (window as any).React;
 const ReactDOM = (window as any).ReactDOM;
@@ -1765,22 +1761,25 @@ const StudentTimetableView = ({ timetable }) => {
         <div className="detail-section">
             <h3 className="dashboard-subtitle">My Timetable</h3>
             <div className="timetable-view">
-                 {Object.entries(entriesByDay).map(([day, entries]) => (
-                    <div key={day as string} className="timetable-day">
-                        <h4>{day as string}</h4>
-                        <ul>
-                            {(entries as TimetableEntry[]).map((entry, index) => (
-                                <li key={index} className="timetable-entry">
-                                    <span className="entry-time">{entry.time}</span>
-                                    <div className="entry-details">
-                                        <strong>{entry.subject}</strong>
-                                        <span>with {entry.teacher}</span>
-                                    </div>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                 ))}
+                 {Object.entries(entriesByDay).map(([day, entries]) => {
+                    const currentEntries = entries as TimetableEntry[];
+                    return (
+                        <div key={day} className="timetable-day">
+                            <h4>{day}</h4>
+                            <ul>
+                                {currentEntries.map((entry, index) => (
+                                    <li key={index} className="timetable-entry">
+                                        <span className="entry-time">{entry.time}</span>
+                                        <div className="entry-details">
+                                            <strong>{entry.subject}</strong>
+                                            <span>with {entry.teacher}</span>
+                                        </div>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    );
+                 })}
             </div>
         </div>
     );

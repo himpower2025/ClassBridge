@@ -1,12 +1,22 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { createRoot } from 'react-dom/client';
-import './index.css';
+const React = (window as any).React;
+const ReactDOM = (window as any).ReactDOM;
+const { useState, useEffect, useRef } = React;
+const { createRoot } = ReactDOM;
+// Ensure we are using the global React/ReactDOM variables loaded via UMD in index.html
+const React = (window as any).React;
+const ReactDOM = (window as any).ReactDOM;
+
+// Destructure the hooks and functions we need
+const { useState, useEffect, useRef } = React;
+const { createRoot } = ReactDOM;
+
+console.log("ClassBridge App Starting... React Version:", React.version);
 
 type Role = 'Student' | 'Parent' | 'Teacher' | 'Administrator';
 
 // --- NEW LOGO COMPONENT (CONCEPT 2: THE SPARK OF CONNECTION) ---
-const ClassBridgeLogo: React.FC<{ size?: number }> = ({ size = 48 }) => {
-    const svgRef = useRef<SVGSVGElement>(null);
+const ClassBridgeLogo = ({ size = 48 }) => {
+    const svgRef = useRef(null);
 
     const handleDownload = () => {
         if (!svgRef.current) return;
@@ -17,7 +27,7 @@ const ClassBridgeLogo: React.FC<{ size?: number }> = ({ size = 48 }) => {
         const secondaryColor = computedStyles.getPropertyValue('--secondary-color').trim();
         
         // Clone the node to avoid modifying the one in the DOM
-        const svgNode = svgRef.current.cloneNode(true) as SVGSVGElement;
+        const svgNode = svgRef.current.cloneNode(true);
         
         // Remove classes and interactive attributes for a clean, self-contained SVG file
         svgNode.removeAttribute('class');
@@ -27,13 +37,13 @@ const ClassBridgeLogo: React.FC<{ size?: number }> = ({ size = 48 }) => {
         svgNode.removeAttribute('tabindex');
         
         // Find each group and inline the color
-        const entities = svgNode.querySelector('.entities') as SVGGElement;
+        const entities = svgNode.querySelector('.entities');
         if (entities) {
             entities.removeAttribute('class');
             entities.setAttribute('stroke', primaryColor);
         }
 
-        const spark = svgNode.querySelector('.spark') as SVGGElement;
+        const spark = svgNode.querySelector('.spark');
         if (spark) {
             spark.removeAttribute('class');
             spark.setAttribute('fill', secondaryColor);
@@ -87,7 +97,7 @@ const ClassBridgeLogo: React.FC<{ size?: number }> = ({ size = 48 }) => {
 };
 
 // --- NEW SCHOOL-SPECIFIC LOGO COMPONENT ---
-const SchoolLogo: React.FC<{ logoUrl?: string; schoolName?: string }> = ({ logoUrl, schoolName }) => {
+const SchoolLogo = ({ logoUrl, schoolName }) => {
     if (logoUrl) {
         return <img src={logoUrl} alt={`${schoolName} Logo`} className="school-logo-image" />;
     }
@@ -669,17 +679,15 @@ const mockAssignments: Assignment[] = [
 ];
 // -------------------------
 
-const MagicLinkLogin: React.FC<{
-    onLogin: (user: User, school: SchoolConfig, role: Role, allAffiliations: UserRegistryEntry[]) => void;
-}> = ({ onLogin }) => {
+const MagicLinkLogin = ({ onLogin }) => {
     const [email, setEmail] = useState('');
-    const [step, setStep] = useState<'identify' | 'select-school' | 'confirm'>('identify');
+    const [step, setStep] = useState('identify');
     const [error, setError] = useState('');
-    const [identifiedAffiliations, setIdentifiedAffiliations] = useState<UserRegistryEntry[]>([]);
-    const [selectedAffiliation, setSelectedAffiliation] = useState<UserRegistryEntry | null>(null);
+    const [identifiedAffiliations, setIdentifiedAffiliations] = useState([]);
+    const [selectedAffiliation, setSelectedAffiliation] = useState(null);
 
 
-    const handleIdentifySubmit = (e: React.FormEvent) => {
+    const handleIdentifySubmit = (e) => {
         e.preventDefault();
         const userAffiliations = completeUserRegistry[email.toLowerCase()];
 
@@ -697,7 +705,7 @@ const MagicLinkLogin: React.FC<{
         }
     };
     
-    const handleSelectSchool = (affiliation: UserRegistryEntry) => {
+    const handleSelectSchool = (affiliation) => {
         setSelectedAffiliation(affiliation);
         setStep('confirm');
     };
@@ -727,6 +735,10 @@ const MagicLinkLogin: React.FC<{
     return (
         <div className="universal-login-container">
              <div className="login-header">
+                {/* ADDED LOGO HERE */}
+                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
+                    <ClassBridgeLogo size={64} />
+                </div>
                 <h2>{
                     step === 'identify' ? "Welcome to ClassBridge" : 
                     step === 'select-school' ? "Select a School" : 
@@ -816,12 +828,9 @@ const formatTimeAgo = (date: Date): string => {
     return Math.floor(seconds) + "s ago";
 };
 
-const Notifications: React.FC<{
-    notifications: Notification[];
-    onUpdateNotifications: (notifications: Notification[]) => void;
-}> = ({ notifications, onUpdateNotifications }) => {
+const Notifications = ({ notifications, onUpdateNotifications }) => {
     const [isOpen, setIsOpen] = useState(false);
-    const panelRef = useRef<HTMLDivElement>(null);
+    const panelRef = useRef(null);
     const unreadCount = notifications.filter(n => !n.read).length;
 
     const handleMarkAsRead = (id: number) => {
@@ -835,8 +844,8 @@ const Notifications: React.FC<{
     };
     
     useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (panelRef.current && !panelRef.current.contains(event.target as Node)) {
+        const handleClickOutside = (event) => {
+            if (panelRef.current && !panelRef.current.contains(event.target)) {
                 setIsOpen(false);
             }
         };
@@ -877,7 +886,7 @@ const Notifications: React.FC<{
 
 
 // --- SHARED & PARENT DASHBOARD COMPONENTS ---
-const GradesView: React.FC<{ grades: Grade[] }> = ({ grades }) => (
+const GradesView = ({ grades }) => (
     <div className="detail-section">
         <h3>Current Grades</h3>
         <ul className="grades-list">
@@ -891,7 +900,7 @@ const GradesView: React.FC<{ grades: Grade[] }> = ({ grades }) => (
     </div>
 );
 
-const AttendanceView: React.FC<{ attendance: Attendance }> = ({ attendance }) => (
+const AttendanceView = ({ attendance }) => (
     <div className="detail-section">
         <h3>Attendance Summary</h3>
         <div className="attendance-summary">
@@ -911,9 +920,9 @@ const AttendanceView: React.FC<{ attendance: Attendance }> = ({ attendance }) =>
     </div>
 );
 
-const AbsenceNotificationView: React.FC = () => {
+const AbsenceNotificationView = () => {
     const [submitted, setSubmitted] = useState(false);
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
         setSubmitted(true);
         setTimeout(() => setSubmitted(false), 4000);
@@ -941,7 +950,7 @@ const AbsenceNotificationView: React.FC = () => {
     );
 };
 
-const ReportCardPreviewModal: React.FC<{ report: ReportCard, onClose: () => void }> = ({ report, onClose }) => (
+const ReportCardPreviewModal = ({ report, onClose }) => (
     <div className="modal-overlay" onClick={onClose}>
         <div className="modal-content report-card-preview-modal" onClick={e => e.stopPropagation()}>
             <div className="modal-header">
@@ -970,8 +979,8 @@ const ReportCardPreviewModal: React.FC<{ report: ReportCard, onClose: () => void
     </div>
 );
 
-const ReportCardView: React.FC<{ reportCards: ReportCard[] }> = ({ reportCards }) => {
-    const [previewingReport, setPreviewingReport] = useState<ReportCard | null>(null);
+const ReportCardView = ({ reportCards }) => {
+    const [previewingReport, setPreviewingReport] = useState(null);
 
     return (
         <>
@@ -1022,11 +1031,8 @@ const ReportCardView: React.FC<{ reportCards: ReportCard[] }> = ({ reportCards }
 };
 
 // New Tuition & Fees View Component
-const TuitionView: React.FC<{ 
-    invoices: TuitionInvoice[]; 
-    onPayInvoice: (invoiceId: number) => void;
-}> = ({ invoices, onPayInvoice }) => {
-    const [payingInvoice, setPayingInvoice] = useState<TuitionInvoice | null>(null);
+const TuitionView = ({ invoices, onPayInvoice }) => {
+    const [payingInvoice, setPayingInvoice] = useState(null);
     const [paymentConfirmed, setPaymentConfirmed] = useState(false);
 
     const handleSimulatedPayment = () => {
@@ -1095,9 +1101,9 @@ const TuitionView: React.FC<{
 };
 
 
-const MessageTeacherView: React.FC<{ teacherName: string; isModal?: boolean }> = ({ teacherName, isModal = false }) => {
+const MessageTeacherView = ({ teacherName, isModal = false }) => {
     const [submitted, setSubmitted] = useState(false);
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
         setSubmitted(true);
         setTimeout(() => setSubmitted(false), 4000);
@@ -1129,14 +1135,14 @@ const MessageTeacherView: React.FC<{ teacherName: string; isModal?: boolean }> =
 
 type ParentActiveView = 'Grades' | 'Attendance' | 'Absence' | 'Message' | 'ReportCards' | 'Tuition';
 
-const ChildDetailView: React.FC<{ 
-    child: Child; 
-    reportCards: ReportCard[];
-    tuitionInvoices: TuitionInvoice[];
-    onBack: () => void;
-    onUpdateTuition: (invoiceId: number) => void;
-}> = ({ child, reportCards, tuitionInvoices, onBack, onUpdateTuition }) => {
-    const [activeView, setActiveView] = useState<ParentActiveView>('Grades');
+const ChildDetailView = ({ 
+    child, 
+    reportCards, 
+    tuitionInvoices, 
+    onBack, 
+    onUpdateTuition 
+}) => {
+    const [activeView, setActiveView] = useState('Grades');
 
     return (
         <div className="child-detail-container">
@@ -1160,7 +1166,7 @@ const ChildDetailView: React.FC<{
                 {activeView === 'ReportCards' && (
                     <div className="detail-section report-card-section">
                         <h3>Term Report Cards</h3>
-                        <ReportCardView reportCards={reportCards} />
+                        <ReportCardView reportCards={child.reportCards} />
                     </div>
                 )}
                 {activeView === 'Tuition' && <TuitionView invoices={tuitionInvoices} onPayInvoice={onUpdateTuition} />}
@@ -1172,7 +1178,7 @@ const ChildDetailView: React.FC<{
     );
 }
 
-const AnnouncementsView: React.FC = () => {
+const AnnouncementsView = () => {
     // Sort announcements by date, newest first
     const sortedAnnouncements = [...mockAnnouncements].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
@@ -1192,7 +1198,7 @@ const AnnouncementsView: React.FC = () => {
     );
 };
 
-const CalendarView: React.FC = () => {
+const CalendarView = () => {
     const eventsByMonth = mockAcademicCalendar.reduce((acc, event) => {
         const month = new Date(event.date).toLocaleString('en-US', { month: 'long', year: 'numeric' });
         if (!acc[month]) {
@@ -1229,7 +1235,7 @@ const CalendarView: React.FC = () => {
     );
 };
 
-const SchoolBusView: React.FC = () => {
+const SchoolBusView = () => {
     return (
         <div className="detail-section">
             <h3 className="dashboard-subtitle">School Bus Tracking</h3>
@@ -1241,7 +1247,7 @@ const SchoolBusView: React.FC = () => {
 }
 
 // NEW: Component for Life-Prep Academy's custom feature
-const CollegeCounselingView: React.FC = () => {
+const CollegeCounselingView = () => {
     return (
         <div className="detail-section">
             <h3 className="dashboard-subtitle">College Counseling Portal</h3>
@@ -1255,7 +1261,7 @@ const CollegeCounselingView: React.FC = () => {
 }
 
 
-const ReportsView: React.FC<{ parent: Parent; allChildren: Child[]; reportCards: ReportCard[] }> = ({ parent, allChildren, reportCards }) => {
+const ReportsView = ({ parent, allChildren, reportCards }) => {
     const myChildren = allChildren.filter(child => parent.childrenIds.includes(child.id));
     
     return (
@@ -1279,19 +1285,19 @@ const ReportsView: React.FC<{ parent: Parent; allChildren: Child[]; reportCards:
     );
 };
 
-const SchoolSwitcher: React.FC<{
-    currentSchool: SchoolConfig;
-    affiliations: UserRegistryEntry[];
-    onSwitchSchool: (schoolId: string) => void;
-}> = ({ currentSchool, affiliations, onSwitchSchool }) => {
+const SchoolSwitcher = ({
+    currentSchool,
+    affiliations,
+    onSwitchSchool,
+}) => {
     const [isOpen, setIsOpen] = useState(false);
-    const switcherRef = useRef<HTMLDivElement>(null);
+    const switcherRef = useRef(null);
 
     const otherAffiliations = affiliations.filter(aff => aff.schoolId !== currentSchool.id);
 
     useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (switcherRef.current && !switcherRef.current.contains(event.target as Node)) {
+        const handleClickOutside = (event) => {
+            if (switcherRef.current && !switcherRef.current.contains(event.target)) {
                 setIsOpen(false);
             }
         };
@@ -1331,21 +1337,9 @@ const SchoolSwitcher: React.FC<{
 
 type ParentTab = 'Announcements' | 'Calendar' | 'Children' | 'Reports' | 'SchoolBus' | 'CollegeCounseling';
 
-const ParentDashboard: React.FC<{ 
-    parent: Parent;
-    school: SchoolConfig;
-    allChildren: Child[]; 
-    notifications: Notification[];
-    reportCards: ReportCard[];
-    tuitionInvoices: TuitionInvoice[];
-    userAffiliations: UserRegistryEntry[];
-    onUpdateNotifications: (notifications: Notification[]) => void; 
-    onUpdateTuition: (invoiceId: number) => void;
-    onSwitchSchool: (schoolId: string) => void;
-    onLogout: () => void 
-}> = ({ parent, school, allChildren, notifications, reportCards, tuitionInvoices, userAffiliations, onUpdateNotifications, onUpdateTuition, onSwitchSchool, onLogout }) => {
-    const [selectedChild, setSelectedChild] = useState<Child | null>(null);
-    const [activeTab, setActiveTab] = useState<ParentTab>('Children');
+const ParentDashboard = ({ parent, school, allChildren, notifications, reportCards, tuitionInvoices, userAffiliations, onUpdateNotifications, onUpdateTuition, onSwitchSchool, onLogout }) => {
+    const [selectedChild, setSelectedChild] = useState(null);
+    const [activeTab, setActiveTab] = useState('Children');
     
     // Filter children to show only those in the currently selected school
     const myChildren = allChildren.filter(child => {
@@ -1445,60 +1439,50 @@ const ParentDashboard: React.FC<{
 };
 
 // --- TEACHER DASHBOARD COMPONENTS ---
-const GradeEditor: React.FC<{ grades: Grade[], onAddGrade: (newGrade: Grade) => void }> = ({ grades, onAddGrade }) => {
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+const GradeEditor = ({ grades, onAddGrade }) => {
+    const [subject, setSubject] = useState('');
+    const [score, setScore] = useState('');
+
+    const handleSubmit = (e) => {
         e.preventDefault();
-        const form = e.currentTarget;
-        const subject = (form.elements.namedItem('subject') as HTMLInputElement).value;
-        const score = (form.elements.namedItem('score') as HTMLInputElement).value;
-        onAddGrade({ subject, score });
-        form.reset();
-    };
-
-    return (
-        <div className="detail-section">
-            <h3>Manage Grades</h3>
-            <ul className="grades-list">
-                {grades.map(grade => (
-                    <li key={grade.subject}>
-                        <span>{grade.subject}</span>
-                        <span className="grade-score">{grade.score}</span>
-                    </li>
-                ))}
-            </ul>
-            <form onSubmit={handleSubmit} className="detail-form add-grade-form">
-                <h4>Add New Grade</h4>
-                <div className="form-group-inline">
-                    <div className="form-group">
-                        <label htmlFor="subject">Subject</label>
-                        <input type="text" id="subject" name="subject" required placeholder="e.g., Mathematics" />
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="score">Score</label>
-                        <input type="text" id="score" name="score" required placeholder="e.g., A+" />
-                    </div>
-                    <button type="submit" className="form-button">Add</button>
-                </div>
-            </form>
-        </div>
-    );
-};
-
-const AttendanceEditor: React.FC<{ attendance: Attendance, onUpdateAttendance: (newAttendance: Attendance) => void }> = ({ attendance, onUpdateAttendance }) => {
-    const handleUpdate = (type: keyof Attendance, delta: number) => {
-        const newValue = attendance[type] + delta;
-        if (newValue >= 0) {
-            onUpdateAttendance({ ...attendance, [type]: newValue });
+        if (subject && score) {
+            onAddGrade({ subject, score });
+            setSubject('');
+            setScore('');
         }
     };
 
     return (
+        <form onSubmit={handleSubmit} className="add-grade-form detail-form">
+            <h4>Add New Grade</h4>
+            <div className="form-group-inline">
+                <div className="form-group">
+                    <label htmlFor="subject">Subject</label>
+                    <input type="text" id="subject" value={subject} onChange={e => setSubject(e.target.value)} placeholder="e.g., Art" required />
+                </div>
+                <div className="form-group">
+                    <label htmlFor="score">Score</label>
+                    <input type="text" id="score" value={score} onChange={e => setScore(e.target.value)} placeholder="e.g., A+" required />
+                </div>
+                <button type="submit" className="form-button">Add Grade</button>
+            </div>
+        </form>
+    );
+};
+
+const AttendanceEditor = ({ attendance, onUpdateAttendance }) => {
+    const handleUpdate = (field, delta) => {
+        const newValue = Math.max(0, attendance[field] + delta);
+        onUpdateAttendance({ ...attendance, [field]: newValue });
+    };
+
+    return (
         <div className="detail-section">
-            <h3>Manage Attendance</h3>
+            <h3>Edit Attendance</h3>
             <div className="attendance-editor">
-                {(Object.keys(attendance) as Array<keyof Attendance>).map(key => (
+                {Object.keys(attendance).map(key => (
                     <div key={key} className="attendance-control">
-                        <span className="stat-label">{key.charAt(0).toUpperCase() + key.slice(1)}</span>
+                        <span className="stat-label">{key}</span>
                         <div className="control-group">
                             <button onClick={() => handleUpdate(key, -1)} aria-label={`Decrease ${key} count`}>-</button>
                             <span className="stat-value">{attendance[key]}</span>
@@ -1511,352 +1495,236 @@ const AttendanceEditor: React.FC<{ attendance: Attendance, onUpdateAttendance: (
     );
 };
 
-const ReportCardStudio: React.FC<{
-    student: Child;
-    onPublish: (reportCard: ReportCard) => void;
-}> = ({ student, onPublish }) => {
-    const [term, setTerm] = useState(`Second Term (${new Date().getFullYear()})`);
-    const [overallComment, setOverallComment] = useState('');
-    const [subjectComments, setSubjectComments] = useState<Record<string, string>>({});
-    const [published, setPublished] = useState(false);
+const TeacherStudentDetailView = ({ student, onUpdateStudent, onBack }) => {
+    const [currentStudent, setCurrentStudent] = useState(student);
+    const [activeView, setActiveView] = useState('Grades');
 
-    const handleSubjectCommentChange = (subject: string, comment: string) => {
-        setSubjectComments(prev => ({...prev, [subject]: comment}));
+    const handleUpdate = (updatedStudentData) => {
+        setCurrentStudent(updatedStudentData);
+        onUpdateStudent(updatedStudentData);
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        const newReportCard: ReportCard = {
-            id: Date.now(),
-            studentId: student.id,
-            term,
-            issueDate: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
-            overallComment,
-            entries: student.grades.map(grade => ({
-                subject: grade.subject,
-                score: grade.score,
-                comment: subjectComments[grade.subject] || 'No comment.',
-            }))
-        };
-        onPublish(newReportCard);
-        setPublished(true);
-        setTimeout(() => {
-            setPublished(false);
-            setOverallComment('');
-            setSubjectComments({});
-        }, 5000)
-    };
-    
-    return (
-        <div className="detail-section report-card-studio">
-            <h3>Report Card Studio</h3>
-             {published ? (
-                <p className="confirmation-message">Report card has been published successfully and is now visible to the student and parent.</p>
-            ) : (
-                <form onSubmit={handleSubmit} className="studio-form">
-                    <div className="form-group">
-                        <label htmlFor="term">Term</label>
-                        <input type="text" id="term" value={term} onChange={e => setTerm(e.target.value)} required />
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="overall-comment">Teacher's Overall Comment</label>
-                        <textarea id="overall-comment" rows={5} value={overallComment} onChange={e => setOverallComment(e.target.value)} placeholder={`Write a summary of ${student.name}'s progress this term...`} required />
-                    </div>
-
-                    <h4>Subject-Specific Comments</h4>
-                    <div className="subject-comments-list">
-                        {student.grades.map(grade => (
-                             <div key={grade.subject} className="subject-comment-entry">
-                                <div className="subject-header">
-                                    <span className="entry-subject">{grade.subject}</span>
-                                    <span className="entry-score">{grade.score}</span>
-                                </div>
-                                <div className="form-group">
-                                    <label htmlFor={`comment-${grade.subject}`} className="sr-only">Comment for {grade.subject}</label>
-                                    <textarea 
-                                        id={`comment-${grade.subject}`} 
-                                        rows={3}
-                                        value={subjectComments[grade.subject] || ''}
-                                        onChange={e => handleSubjectCommentChange(grade.subject, e.target.value)}
-                                        placeholder={`Add a comment for ${grade.subject}...`}
-                                    />
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-
-                    <button type="submit" className="form-button publish-btn">Publish Report Card</button>
-                </form>
-            )}
-        </div>
-    );
-};
-
-type TeacherActiveView = 'Grades' | 'Attendance' | 'ReportCard';
-
-const StudentEditorView: React.FC<{ 
-    child: Child; 
-    onBack?: () => void; 
-    onUpdateChild: (updatedChild: Child) => void;
-    onAddReportCard: (reportCard: ReportCard) => void;
-    defaultView?: TeacherActiveView;
-}> = ({ child, onBack, onUpdateChild, onAddReportCard, defaultView }) => {
-    const [activeView, setActiveView] = useState<TeacherActiveView>(defaultView || 'Grades');
-
-    const handleAddGrade = (newGrade: Grade) => {
-        const updatedChild = { ...child, grades: [...child.grades, newGrade] };
-        onUpdateChild(updatedChild);
+    const handleAddGrade = (newGrade) => {
+        const updatedGrades = [...currentStudent.grades, newGrade];
+        handleUpdate({ ...currentStudent, grades: updatedGrades });
     };
 
-    const handleUpdateAttendance = (newAttendance: Attendance) => {
-        const updatedChild = { ...child, attendance: newAttendance };
-        onUpdateChild(updatedChild);
+    const handleUpdateAttendance = (newAttendance) => {
+        handleUpdate({ ...currentStudent, attendance: newAttendance });
     };
 
     return (
         <div className="child-detail-container">
-             {onBack && <button onClick={onBack} className="back-button" aria-label="Go back to class list">
-                &larr; Back to Student List
-            </button>}
+            <button onClick={onBack} className="back-button">&larr; Back to Student List</button>
             <div className="child-detail-header">
-                <h2>{child.name}</h2>
-                <p>{child.grade}</p>
+                <h2>{currentStudent.name}</h2>
+                <p>{currentStudent.grade}</p>
             </div>
             <nav className="detail-nav">
-                <button onClick={() => setActiveView('Grades')} className={activeView === 'Grades' ? 'active' : ''}>Manage Grades</button>
-                <button onClick={() => setActiveView('Attendance')} className={activeView === 'Attendance' ? 'active' : ''}>Manage Attendance</button>
-                 <button onClick={() => setActiveView('ReportCard')} className={activeView === 'ReportCard' ? 'active' : ''}>Write Report Card</button>
+                <button onClick={() => setActiveView('Grades')} className={activeView === 'Grades' ? 'active' : ''}>Grades</button>
+                <button onClick={() => setActiveView('Attendance')} className={activeView === 'Attendance' ? 'active' : ''}>Attendance</button>
             </nav>
             <div className="detail-content">
-                {activeView === 'Grades' && <GradeEditor grades={child.grades} onAddGrade={handleAddGrade} />}
-                {activeView === 'Attendance' && <AttendanceEditor attendance={child.attendance} onUpdateAttendance={handleUpdateAttendance} />}
-                {activeView === 'ReportCard' && <ReportCardStudio student={child} onPublish={onAddReportCard} />}
+                 {activeView === 'Grades' && (
+                    <div className="detail-section">
+                        <GradesView grades={currentStudent.grades} />
+                        <GradeEditor grades={currentStudent.grades} onAddGrade={handleAddGrade} />
+                    </div>
+                 )}
+                 {activeView === 'Attendance' && <AttendanceEditor attendance={currentStudent.attendance} onUpdateAttendance={handleUpdateAttendance} />}
             </div>
         </div>
     );
 };
 
-const AssignmentManager: React.FC<{
-    selectedGrade: string;
-    assignments: Assignment[];
-    onAddAssignment: (newAssignment: Omit<Assignment, 'id'>) => void;
-    onBack: () => void;
-}> = ({ selectedGrade, assignments, onAddAssignment, onBack }) => {
-    const [title, setTitle] = useState('');
-    const [description, setDescription] = useState('');
-    const [dueDate, setDueDate] = useState('');
+
+type TeacherTab = 'Students' | 'Assignments' | 'MessageParents';
+
+const MessageModal = ({ show, onClose, title, children }) => {
+    if (!show) return null;
+    return (
+        <div className="modal-overlay" onClick={onClose}>
+            <div className="modal-content" onClick={e => e.stopPropagation()}>
+                <div className="modal-header">
+                    <h3>{title}</h3>
+                    <button onClick={onClose} className="modal-close-button" aria-label="Close">&times;</button>
+                </div>
+                <div className="modal-body">{children}</div>
+            </div>
+        </div>
+    );
+};
+
+const MessageParentsView = ({ myStudents }) => {
+    const [showModal, setShowModal] = useState(false);
+    const [selectedStudent, setSelectedStudent] = useState(null);
+    const [messageType, setMessageType] = useState('All'); // 'All' or 'Individual'
     const [submitted, setSubmitted] = useState(false);
 
-    const gradeAssignments = assignments.filter(a => a.grade === selectedGrade);
-
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
-        onAddAssignment({ grade: selectedGrade, title, description, dueDate });
-        setTitle('');
-        setDescription('');
-        setDueDate('');
         setSubmitted(true);
-        setTimeout(() => setSubmitted(false), 3000);
+        setTimeout(() => {
+            setSubmitted(false);
+            if (showModal) {
+                setShowModal(false);
+                setSelectedStudent(null);
+            }
+        }, 3000);
+    };
+
+    const handleSelectStudent = (student) => {
+        setSelectedStudent(student);
+        setShowModal(true);
     };
 
     return (
-        <div className="detail-section assignment-manager">
-            <button onClick={onBack} className="back-button">&larr; Back to Class List</button>
-            <h3 className="dashboard-subtitle">{selectedGrade} Assignments</h3>
+        <div className="detail-section">
+            <h3 className="dashboard-subtitle">Message Parents</h3>
             
-            <div className="assignment-content">
-                <div className="assignment-list">
-                    <h4>Current Assignments</h4>
-                    {gradeAssignments.length > 0 ? (
-                        <ul>
-                            {gradeAssignments.map(a => (
-                                <li key={a.id}>
-                                    <strong>{a.title}</strong>
-                                    <p>{a.description}</p>
-                                    <span>Due: {a.dueDate}</span>
-                                </li>
-                            ))}
-                        </ul>
-                    ) : (
-                        <p>No assignments have been posted for this class yet.</p>
-                    )}
-                </div>
+            <div className="message-type-selector">
+                <button className={messageType === 'All' ? 'active' : ''} onClick={() => setMessageType('All')}>Broadcast to All</button>
+                <button className={messageType === 'Individual' ? 'active' : ''} onClick={() => setMessageType('Individual')}>Message Individually</button>
+            </div>
 
-                <div className="assignment-form-container">
-                    <h4>Add New Assignment</h4>
-                     {submitted ? (
-                        <p className="confirmation-message">Assignment posted successfully!</p>
-                    ) : (
-                        <form onSubmit={handleSubmit} className="detail-form">
-                            <div className="form-group">
-                                <label htmlFor="assignment-title">Title</label>
-                                <input id="assignment-title" type="text" value={title} onChange={e => setTitle(e.target.value)} required />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="assignment-desc">Description</label>
-                                <textarea id="assignment-desc" rows={4} value={description} onChange={e => setDescription(e.target.value)} required />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="assignment-due">Due Date</label>
-                                <input id="assignment-due" type="date" value={dueDate} onChange={e => setDueDate(e.target.value)} required />
-                            </div>
-                            <button type="submit" className="form-button">Post Assignment</button>
-                        </form>
-                    )}
+            {messageType === 'All' && (
+                 submitted ? (
+                    <p className="confirmation-message">Your broadcast message has been sent to all parents.</p>
+                ) : (
+                    <form onSubmit={handleSubmit} className="detail-form">
+                        <div className="form-group">
+                            <label htmlFor="broadcast-subject">Subject</label>
+                            <input type="text" id="broadcast-subject" required placeholder="e.g., Upcoming Field Trip" />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="broadcast-body">Message</label>
+                            <textarea id="broadcast-body" rows={5} required placeholder="Write your message to all parents here..."></textarea>
+                        </div>
+                        <button type="submit" className="form-button">Send to All Parents</button>
+                    </form>
+                )
+            )}
+
+            {messageType === 'Individual' && (
+                <div className="student-list-for-messaging">
+                    <h4>Select a student to message their parent:</h4>
+                    <ul>
+                        {myStudents.map(s => (
+                            <li key={s.id} onClick={() => handleSelectStudent(s)}>{s.name}</li>
+                        ))}
+                    </ul>
                 </div>
+            )}
+
+            <MessageModal show={showModal} onClose={() => { setShowModal(false); setSelectedStudent(null); }} title={`Message Parent of ${selectedStudent?.name}`}>
+                 {submitted ? (
+                    <p className="confirmation-message">Your message has been sent!</p>
+                ) : (
+                    <form onSubmit={handleSubmit} className="detail-form">
+                        <div className="form-group">
+                            <label htmlFor="individual-message-subject">Subject</label>
+                            <input type="text" id="individual-message-subject" required placeholder="e.g., Update on progress" />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="individual-message-body">Message</label>
+                            <textarea id="individual-message-body" rows={5} required placeholder={`Write your message to the parent of ${selectedStudent?.name}...`}></textarea>
+                        </div>
+                        <button type="submit" className="form-button">Send Message</button>
+                    </form>
+                )}
+            </MessageModal>
+        </div>
+    );
+};
+
+const AssignmentsView = ({ myStudents }) => {
+    const gradesTaught = [...new Set(myStudents.map(s => s.grade))];
+    const [selectedGrade, setSelectedGrade] = useState(gradesTaught[0] || 'All');
+
+    const filteredAssignments = selectedGrade === 'All'
+        ? mockAssignments
+        : mockAssignments.filter(a => a.grade === selectedGrade);
+    
+    return (
+        <div className="detail-section">
+             <h3 className="dashboard-subtitle">Class Assignments</h3>
+
+            <div className="grade-filter-tabs">
+                <button className={selectedGrade === 'All' ? 'active' : ''} onClick={() => setSelectedGrade('All')}>All Grades</button>
+                {gradesTaught.map(grade => (
+                    <button key={grade} className={selectedGrade === grade ? 'active' : ''} onClick={() => setSelectedGrade(grade)}>{grade}</button>
+                ))}
+            </div>
+
+            <div className="assignments-list">
+                {filteredAssignments.map(assignment => (
+                    <div key={assignment.id} className="assignment-card">
+                        <h4>{assignment.title} <span className="assignment-grade-tag">{assignment.grade}</span></h4>
+                        <p>{assignment.description}</p>
+                        <span>Due: {assignment.dueDate}</span>
+                    </div>
+                ))}
             </div>
         </div>
     );
 };
 
-const PortalLauncher: React.FC<{ onEnterPortal: () => void }> = ({ onEnterPortal }) => (
-    <div className="feature-spotlight mobile-portal-launcher">
-        <h2>Web Platform Available</h2>
-        <p className="feature-intro">
-            Access the full suite of management tools on your desktop.
-        </p>
-        <button className="form-button portal-login-button" onClick={onEnterPortal}>
-            Launch Web Platform
-        </button>
-    </div>
-);
 
-const TeacherDashboard: React.FC<{ 
-    teacher: Teacher; 
-    school: SchoolConfig; 
-    allChildren: Child[]; 
-    assignments: Assignment[];
-    notifications: Notification[]; 
-    userAffiliations: UserRegistryEntry[];
-    onUpdateNotifications: (notifications: Notification[]) => void; 
-    onUpdateChildren: (children: Child[]) => void; 
-    onAddReportCard: (reportCard: ReportCard) => void;
-    onAddAssignment: (assignment: Omit<Assignment, 'id'>) => void;
-    onSwitchSchool: (schoolId: string) => void;
-    onEnterPortal: () => void;
-    onLogout: () => void;
-}> = ({ teacher, school, allChildren, assignments, notifications, userAffiliations, onUpdateNotifications, onUpdateChildren, onAddReportCard, onAddAssignment, onSwitchSchool, onEnterPortal, onLogout }) => {
-    const [selectedChildInfo, setSelectedChildInfo] = useState<{ child: Child; defaultView?: TeacherActiveView } | null>(null);
-    const [selectedGrade, setSelectedGrade] = useState<string | null>(null);
-    const [activeTab, setActiveTab] = useState<'Home' | 'Management' | 'Reports'>('Home');
-    const [viewingAssignmentsForGrade, setViewingAssignmentsForGrade] = useState<string|null>(null);
+const TeacherDashboard = ({ teacher, school, allChildren, notifications, userAffiliations, onUpdateStudent, onUpdateNotifications, onSwitchSchool, onLogout }) => {
+    const [selectedStudent, setSelectedStudent] = useState(null);
+    const [activeTab, setActiveTab] = useState('Students');
     
-    // Filter students by the current school context
-    const studentsAtCurrentSchool = allChildren.filter(child => {
-        const studentAffiliation = completeUserRegistry[child.email.toLowerCase()];
-        return studentAffiliation && studentAffiliation[0].schoolId === school.id;
+    // Filter students for the current teacher at the current school
+    const myStudents = allChildren.filter(child => {
+        // Find the student's affiliation in the registry
+        const affiliation = completeUserRegistry[child.email.toLowerCase()];
+        // Check if the student is affiliated with the current school
+        const isInSchool = affiliation && affiliation.length > 0 && affiliation[0].schoolId === school.id;
+        if (!isInSchool) return false;
+
+        // For multi-school teachers, their name might be different in the system
+        const teacherNameInSystem = userAffiliations.length > 1 ? "Ms. Multi" : teacher.name;
+        return child.teacher === teacherNameInSystem;
     });
 
-    const isSecondary = school.schoolType === 'Secondary';
-
-    const handleUpdateChild = (updatedChild: Child) => {
-        const newChildren = allChildren.map(c => c.id === updatedChild.id ? updatedChild : c);
-        onUpdateChildren(newChildren);
-        setSelectedChildInfo(prev => prev ? { ...prev, child: updatedChild } : null); 
-    };
-
-    if (selectedChildInfo) {
-        return <StudentEditorView 
-            child={selectedChildInfo.child} 
-            onBack={() => setSelectedChildInfo(null)} 
-            onUpdateChild={handleUpdateChild} 
-            onAddReportCard={onAddReportCard} 
-            defaultView={selectedChildInfo.defaultView}
-        />;
+    if (selectedStudent) {
+        return <TeacherStudentDetailView student={selectedStudent} onUpdateStudent={onUpdateStudent} onBack={() => setSelectedStudent(null)} />;
     }
-    
-    if (viewingAssignmentsForGrade) {
-        return <AssignmentManager 
-            selectedGrade={viewingAssignmentsForGrade}
-            assignments={assignments}
-            onAddAssignment={onAddAssignment}
-            onBack={() => setViewingAssignmentsForGrade(null)}
-        />
-    }
-
-    const renderClassSelector = (mode: 'Management' | 'Reports') => {
-        // For Elementary, find the grade the teacher teaches. For Secondary, use teachesGrades array.
-        const classes = isSecondary ? (teacher.teachesGrades || []) : Array.from(new Set(studentsAtCurrentSchool.filter(c => c.teacher === teacher.name).map(c => c.grade)));
-
-        let classStudents: Child[] = [];
-        if (selectedGrade) {
-            classStudents = studentsAtCurrentSchool.filter(child => child.grade === selectedGrade && (isSecondary || child.teacher === teacher.name));
-        }
-        
-        if (selectedGrade) {
-             return (
-                <div className="student-list-view">
-                     <button onClick={() => setSelectedGrade(null)} className="back-button">&larr; Back to Class List</button>
-                     <h3 className="dashboard-subtitle">{selectedGrade} Student List</h3>
-                     <div className="child-selection-container">
-                        {classStudents.map(child => (
-                            <div key={child.id} className="child-card" role="button" onClick={() => {
-                                const defaultView = mode === 'Reports' ? 'ReportCard' : 'Grades';
-                                setSelectedChildInfo({ child, defaultView });
-                            }} tabIndex={0} aria-label={`Manage student ${child.name}`}>
-                                <div className="child-icon" aria-hidden="true">{child.name.charAt(0)}</div>
-                                <h4>{child.name}</h4>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            );
-        }
-
-        return (
-            <>
-                <h3 className="dashboard-subtitle">{mode === 'Management' ? 'Class Management' : 'Report Card Entry'}</h3>
-                <div className="teacher-class-list">
-                    {classes.map(grade => (
-                         <div key={grade} className="class-card" >
-                            <div className="class-card-header">
-                                <div className="child-icon" aria-hidden="true">🎓</div>
-                                <h4>{grade}</h4>
-                            </div>
-                             <div className="class-card-actions">
-                                {mode === 'Management' ? (
-                                    <>
-                                        <button onClick={() => setSelectedGrade(grade)}>Manage Students</button>
-                                        <button onClick={() => setViewingAssignmentsForGrade(grade)}>Manage Assignments</button>
-                                    </>
-                                ) : (
-                                     <button onClick={() => setSelectedGrade(grade)}>Select Students</button>
-                                )}
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </>
-        );
-    };
 
     const renderActiveTab = () => {
         switch(activeTab) {
-            case 'Home':
-                return (
-                    <div className="detail-section">
-                        <PortalLauncher onEnterPortal={onEnterPortal} />
-                        <AnnouncementsView />
-                    </div>
-                );
-            case 'Management':
-                return renderClassSelector('Management');
-            case 'Reports':
-                return renderClassSelector('Reports');
+            case 'Assignments':
+                return <AssignmentsView myStudents={myStudents} />;
+            case 'MessageParents':
+                return <MessageParentsView myStudents={myStudents} />;
+            case 'Students':
             default:
-                return null;
+                return (
+                    <>
+                        <h3 className="dashboard-subtitle">My Students at {school.name}</h3>
+                        <div className="student-list">
+                            {myStudents.map(student => (
+                                <div key={student.id} className="student-card" role="button" onClick={() => setSelectedStudent(student)} tabIndex={0}>
+                                    <div className="student-icon" aria-hidden="true">{student.name.charAt(0)}</div>
+                                    <h4>{student.name}</h4>
+                                    <p>{student.grade}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </>
+                );
         }
     };
-    
+
     return (
         <div className="dashboard-container teacher-dashboard">
             <header className="dashboard-header">
                 <div className="dashboard-header-school-info">
-                    <SchoolLogo logoUrl={school.logoUrl} schoolName={school.name} />
-                    <SchoolSwitcher currentSchool={school} affiliations={userAffiliations} onSwitchSchool={onSwitchSchool} />
+                     <SchoolLogo logoUrl={school.logoUrl} schoolName={school.name} />
+                     <SchoolSwitcher currentSchool={school} affiliations={userAffiliations} onSwitchSchool={onSwitchSchool} />
                 </div>
                 <div className="header-actions">
-                     <span className="welcome-message">Welcome, {teacher.name}!</span>
+                    <span className="welcome-message">Welcome, {teacher.name}!</span>
                     <Notifications notifications={notifications} onUpdateNotifications={onUpdateNotifications} />
                     <button onClick={onLogout} className="logout-button">Logout</button>
                 </div>
@@ -1865,890 +1733,253 @@ const TeacherDashboard: React.FC<{
                 {renderActiveTab()}
             </main>
             <nav className="bottom-nav">
-                <button className={`nav-item ${activeTab === 'Home' ? 'active' : ''}`} onClick={() => setActiveTab('Home')}>
-                    <span className="nav-icon">🏠</span>
-                    <span className="nav-label">Home</span>
+                <button className={`nav-item ${activeTab === 'Students' ? 'active' : ''}`} onClick={() => setActiveTab('Students')}>
+                    <span className="nav-icon">👥</span>
+                    <span className="nav-label">My Students</span>
                 </button>
-                 <button className={`nav-item ${activeTab === 'Management' ? 'active' : ''}`} onClick={() => setActiveTab('Management')}>
-                    <span className="nav-icon">🧑‍🏫</span>
-                    <span className="nav-label">Class Mgmt</span>
+                 <button className={`nav-item ${activeTab === 'Assignments' ? 'active' : ''}`} onClick={() => setActiveTab('Assignments')}>
+                    <span className="nav-icon">📝</span>
+                    <span className="nav-label">Assignments</span>
                 </button>
-                 <button className={`nav-item ${activeTab === 'Reports' ? 'active' : ''}`} onClick={() => setActiveTab('Reports')}>
-                    <span className="nav-icon">✍️</span>
-                    <span className="nav-label">Reports</span>
+                 <button className={`nav-item ${activeTab === 'MessageParents' ? 'active' : ''}`} onClick={() => setActiveTab('MessageParents')}>
+                    <span className="nav-icon">✉️</span>
+                    <span className="nav-label">Message Parents</span>
                 </button>
             </nav>
         </div>
     );
 };
 
-
 // --- STUDENT DASHBOARD COMPONENTS ---
-
-// New Modal Component for Subject Details
-const SubjectDetailModal: React.FC<{ entry: TimetableEntry, onClose: () => void }> = ({ entry, onClose }) => (
-    <div className="modal-overlay" onClick={onClose}>
-        <div className="modal-content" onClick={e => e.stopPropagation()}>
-            <div className="modal-header">
-                <h3>{entry.subject}</h3>
-                <button onClick={onClose} className="modal-close-button" aria-label="Close">&times;</button>
-            </div>
-            <div className="modal-body">
-                <p><strong>Teacher:</strong> {entry.teacher}</p>
-                <div className="subject-modal-section">
-                    <h4>Learning Materials</h4>
-                    <ul>
-                        <li><a href="#" onClick={e => e.preventDefault()}>Today's Lecture Notes.pdf</a></li>
-                        <li><a href="#" onClick={e => e.preventDefault()}>Reference Video Link</a></li>
-                    </ul>
-                </div>
-                <div className="subject-modal-section">
-                    <h4>Assignment</h4>
-                    <p>Complete problems 3 and 5 on page 54 of the textbook and submit by the next class.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-);
-
-// New Modal Component for Messaging Teacher
-const MessageTeacherModal: React.FC<{ teacherName: string, onClose: () => void }> = ({ teacherName, onClose }) => (
-    <div className="modal-overlay" onClick={onClose}>
-        <div className="modal-content" onClick={e => e.stopPropagation()}>
-             <div className="modal-header">
-                <h3>Message to {teacherName}</h3>
-                <button onClick={onClose} className="modal-close-button" aria-label="Close">&times;</button>
-            </div>
-            <div className="modal-body">
-                <MessageTeacherView teacherName={teacherName} isModal={true} />
-            </div>
-        </div>
-    </div>
-);
-
-
-const TimetableView: React.FC<{ 
-    timetable: TimetableEntry[];
-    onSubjectClick: (entry: TimetableEntry) => void;
-    onTeacherClick: (teacherName: string) => void;
-}> = ({ timetable, onSubjectClick, onTeacherClick }) => {
-    const groupedByDay = timetable.reduce((acc, entry) => {
-        (acc[entry.day] = acc[entry.day] || []).push(entry);
+const StudentTimetableView = ({ timetable }) => {
+    const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    const entriesByDay = days.reduce((acc: Record<string, TimetableEntry[]>, day) => {
+        const dayEntries = (timetable as TimetableEntry[]).filter(entry => entry.day === day).sort((a,b) => a.time.localeCompare(b.time));
+        if (dayEntries.length > 0) {
+            acc[day] = dayEntries;
+        }
         return acc;
     }, {} as Record<string, TimetableEntry[]>);
 
-    const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-
     return (
-        <div className="detail-section timetable-view">
+        <div className="detail-section">
             <h3 className="dashboard-subtitle">My Timetable</h3>
-            {daysOfWeek.map(day => (
-                groupedByDay[day] && (
-                    <div key={day} className="timetable-day">
-                        <h4>{day}</h4>
-                        <ul className="timetable-list">
-                            {groupedByDay[day].sort((a,b) => a.time.localeCompare(b.time)).map((entry, index) => (
+            <div className="timetable-view">
+                 {Object.entries(entriesByDay).map(([day, entries]) => (
+                    <div key={day as string} className="timetable-day">
+                        <h4>{day as string}</h4>
+                        <ul>
+                            {(entries as TimetableEntry[]).map((entry, index) => (
                                 <li key={index} className="timetable-entry">
                                     <span className="entry-time">{entry.time}</span>
-                                    <div className="entry-details-interactive">
-                                      <button className="subject-button" onClick={() => onSubjectClick(entry)}>{entry.subject}</button>
-                                      <button className="teacher-button" onClick={() => onTeacherClick(entry.teacher)}>{entry.teacher}</button>
+                                    <div className="entry-details">
+                                        <strong>{entry.subject}</strong>
+                                        <span>with {entry.teacher}</span>
                                     </div>
                                 </li>
                             ))}
                         </ul>
                     </div>
-                )
-            ))}
+                 ))}
+            </div>
         </div>
     );
 };
 
-type StudentTab = 'Announcements' | 'Calendar' | 'Timetable' | 'Reports';
-
-const StudentDashboard: React.FC<{ 
-    student: Child;
-    school: SchoolConfig;
-    reportCards: ReportCard[];
-    notifications: Notification[]; 
-    userAffiliations: UserRegistryEntry[];
-    onUpdateNotifications: (notifications: Notification[]) => void;
-    onSwitchSchool: (schoolId: string) => void; 
-    onLogout: () => void 
-}> = ({ student, school, reportCards, notifications, userAffiliations, onUpdateNotifications, onSwitchSchool, onLogout }) => {
-    const [activeTab, setActiveTab] = useState<StudentTab>('Timetable');
-    const [selectedEntry, setSelectedEntry] = useState<TimetableEntry | null>(null);
-    const [messagingTeacher, setMessagingTeacher] = useState<string | null>(null);
-    const studentReportCards = reportCards.filter(rc => rc.studentId === student.id);
+const StudentDashboard = ({ student, school, notifications, onUpdateNotifications, onLogout }) => {
+    const [activeTab, setActiveTab] = useState('Grades');
 
     const renderActiveTab = () => {
         switch(activeTab) {
-            case 'Announcements':
-                return <AnnouncementsView />;
-            case 'Calendar':
-                return <CalendarView />;
-            case 'Reports':
-                return (
-                     <div className="detail-section report-card-section">
-                        <h3 className="dashboard-subtitle">Report Cards</h3>
-                        <ReportCardView reportCards={studentReportCards} />
-                    </div>
-                );
+            case 'Attendance':
+                return <AttendanceView attendance={student.attendance} />;
             case 'Timetable':
+                return <StudentTimetableView timetable={student.timetable} />;
+            case 'Assignments':
+                return <AssignmentsView myStudents={[student]} />;
+            case 'Grades':
             default:
-                return <TimetableView 
-                          timetable={student.timetable} 
-                          onSubjectClick={setSelectedEntry}
-                          onTeacherClick={setMessagingTeacher}
-                        />;
+                return <GradesView grades={student.grades} />;
         }
-    };
-
-    return (
-        <div className="dashboard-container student-dashboard">
-             <header className="dashboard-header">
-                 <div className="dashboard-header-school-info">
-                    <SchoolLogo logoUrl={school.logoUrl} schoolName={school.name} />
-                    <SchoolSwitcher currentSchool={school} affiliations={userAffiliations} onSwitchSchool={onSwitchSchool} />
-                </div>
-                 <div className="header-actions">
-                    <span className="welcome-message">Welcome, {student.name}!</span>
-                    <Notifications notifications={notifications} onUpdateNotifications={onUpdateNotifications} />
-                    <button onClick={onLogout} className="logout-button">Logout</button>
-                </div>
-            </header>
-            <main className="dashboard-main">
-                {renderActiveTab()}
-            </main>
-            <nav className="bottom-nav">
-                <button className={`nav-item ${activeTab === 'Announcements' ? 'active' : ''}`} onClick={() => setActiveTab('Announcements')}>
-                    <span className="nav-icon">📢</span>
-                    <span className="nav-label">Announcements</span>
-                </button>
-                 <button className={`nav-item ${activeTab === 'Calendar' ? 'active' : ''}`} onClick={() => setActiveTab('Calendar')}>
-                    <span className="nav-icon">📅</span>
-                    <span className="nav-label">Calendar</span>
-                </button>
-                 <button className={`nav-item ${activeTab === 'Timetable' ? 'active' : ''}`} onClick={() => setActiveTab('Timetable')}>
-                    <span className="nav-icon">🕒</span>
-                    <span className="nav-label">Timetable</span>
-                </button>
-                 <button className={`nav-item ${activeTab === 'Reports' ? 'active' : ''}`} onClick={() => setActiveTab('Reports')}>
-                    <span className="nav-icon">📄</span>
-                    <span className="nav-label">Reports</span>
-                </button>
-            </nav>
-
-            {selectedEntry && (
-                <SubjectDetailModal 
-                    entry={selectedEntry}
-                    onClose={() => setSelectedEntry(null)}
-                />
-            )}
-            {messagingTeacher && (
-                <MessageTeacherModal 
-                    teacherName={messagingTeacher}
-                    onClose={() => setMessagingTeacher(null)}
-                />
-            )}
-        </div>
-    );
-};
-
-// --- ADMIN DASHBOARD / PORTAL COMPONENTS (OLD, for reference, see WebPortal for new) ---
-const AdminAnnouncements: React.FC<{ onAddNotification: (title: string, message: string, recipient: Role | 'All') => void; }> = ({ onAddNotification }) => {
-    const [title, setTitle] = useState('');
-    const [message, setMessage] = useState('');
-    const [recipient, setRecipient] = useState<Role | 'All'>('All');
-    const [submitted, setSubmitted] = useState(false);
-
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        onAddNotification(title, message, recipient);
-        setTitle('');
-        setMessage('');
-        setRecipient('All');
-        setSubmitted(true);
-        setTimeout(() => setSubmitted(false), 4000);
-    };
-
-    return (
-        <div className="detail-section">
-            <h3>Send a New Announcement</h3>
-            {submitted ? (
-                <p className="confirmation-message">Announcement sent successfully!</p>
-            ) : (
-                <form onSubmit={handleSubmit} className="detail-form">
-                    <div className="form-group">
-                        <label htmlFor="announcement-title">Title</label>
-                        <input
-                            type="text"
-                            id="announcement-title"
-                            value={title}
-                            onChange={(e) => setTitle(e.target.value)}
-                            required
-                            placeholder="e.g., School Closure"
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="announcement-message">Message</label>
-                        <textarea
-                            id="announcement-message"
-                            rows={4}
-                            value={message}
-                            onChange={(e) => setMessage(e.target.value)}
-                            required
-                            placeholder="Write your announcement here..."
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="announcement-recipient">Recipient Group</label>
-                        <select
-                            id="announcement-recipient"
-                            value={recipient}
-                            onChange={(e) => setRecipient(e.target.value as Role | 'All')}
-                        >
-                            <option value="All">All Users</option>
-                            <option value="Parent">Parents</option>
-                            <option value="Teacher">Teachers</option>
-                            <option value="Student">Students</option>
-                        </select>
-                    </div>
-                    <button type="submit" className="form-button">Send Announcement</button>
-                </form>
-            )}
-        </div>
-    );
-};
-
-const AdminDashboardMobile: React.FC<{ admin: User; school: SchoolConfig; userAffiliations: UserRegistryEntry[]; onAddNotification: (title: string, message: string, recipient: Role | 'All') => void; onSwitchSchool: (schoolId: string) => void; onLogout: () => void; onEnterPortal: () => void }> = ({ admin, school, userAffiliations, onAddNotification, onSwitchSchool, onLogout, onEnterPortal }) => {
+    }
     
     return (
-        <div className="dashboard-container admin-dashboard">
+        <div className="dashboard-container student-dashboard">
             <header className="dashboard-header">
                 <div className="dashboard-header-school-info">
                     <SchoolLogo logoUrl={school.logoUrl} schoolName={school.name} />
-                    <SchoolSwitcher currentSchool={school} affiliations={userAffiliations} onSwitchSchool={onSwitchSchool} />
+                    <h2 className="school-name-static">{school.name}</h2>
                 </div>
-                 <div className="header-actions">
+                <div className="header-actions">
+                    <span className="welcome-message">Welcome, {student.name}!</span>
+                     <Notifications notifications={notifications} onUpdateNotifications={onUpdateNotifications} />
+                    <button onClick={onLogout} className="logout-button">Logout</button>
+                </div>
+            </header>
+             <main className="dashboard-main">
+                {renderActiveTab()}
+            </main>
+            <nav className="bottom-nav">
+                <button className={`nav-item ${activeTab === 'Grades' ? 'active' : ''}`} onClick={() => setActiveTab('Grades')}>
+                    <span className="nav-icon">📊</span>
+                    <span className="nav-label">Grades</span>
+                </button>
+                 <button className={`nav-item ${activeTab === 'Attendance' ? 'active' : ''}`} onClick={() => setActiveTab('Attendance')}>
+                    <span className="nav-icon">✅</span>
+                    <span className="nav-label">Attendance</span>
+                </button>
+                 <button className={`nav-item ${activeTab === 'Timetable' ? 'active' : ''}`} onClick={() => setActiveTab('Timetable')}>
+                    <span className="nav-icon">🗓️</span>
+                    <span className="nav-label">Timetable</span>
+                </button>
+                 <button className={`nav-item ${activeTab === 'Assignments' ? 'active' : ''}`} onClick={() => setActiveTab('Assignments')}>
+                    <span className="nav-icon">📝</span>
+                    <span className="nav-label">Assignments</span>
+                </button>
+            </nav>
+        </div>
+    );
+};
+
+// --- ADMIN DASHBOARD COMPONENTS ---
+const AdminDashboard = ({ admin, school, onLogout }) => {
+    return (
+        <div className="dashboard-container admin-dashboard">
+            <header className="dashboard-header">
+                 <div className="dashboard-header-school-info">
+                    <SchoolLogo logoUrl={school.logoUrl} schoolName={school.name} />
+                    <h2 className="school-name-static">{school.name}</h2>
+                </div>
+                <div className="header-actions">
                     <span className="welcome-message">Welcome, {admin.name}!</span>
                     <button onClick={onLogout} className="logout-button">Logout</button>
                 </div>
             </header>
-            <main className="dashboard-main portal-main">
-                <PortalLauncher onEnterPortal={onEnterPortal} />
-                <div className="detail-section">
-                    <AdminAnnouncements onAddNotification={onAddNotification} />
+            <main className="dashboard-main">
+                <div className="placeholder-content" style={{textAlign: 'center', padding: '4rem'}}>
+                    <h3>Administrator Dashboard</h3>
+                    <p>Features for managing students, teachers, and school-wide settings will be available here.</p>
                 </div>
             </main>
         </div>
     );
 };
 
-// --- WEB PORTAL COMPONENTS (REBUILT) ---
-type WebPortalView = 
-  | 'teacher_dashboard' | 'teacher_classes' | 'teacher_assignments' | 'teacher_reports' | 'teacher_communication'
-  | 'admin_dashboard' | 'admin_users' | 'admin_academics' | 'admin_announcements' | 'admin_settings';
 
-const SideNavbar: React.FC<{ role: Role, activeView: WebPortalView, onNavigate: (view: WebPortalView) => void }> = ({ role, activeView, onNavigate }) => {
-    const getNavItems = () => {
-        if (role === 'Teacher') {
-            return [
-                { id: 'teacher_dashboard', label: 'Dashboard', icon: '📊' },
-                { id: 'teacher_classes', label: 'My Classes', icon: '🧑‍🏫' },
-                { id: 'teacher_assignments', label: 'Assignments', icon: '📝' },
-                { id: 'teacher_reports', label: 'Report Card Studio', icon: '✍️' },
-                { id: 'teacher_communication', label: 'Communication', icon: '💬' },
-            ] as const;
-        }
-        if (role === 'Administrator') {
-            return [
-                { id: 'admin_dashboard', label: 'School Dashboard', icon: '📈' },
-                { id: 'admin_users', label: 'User Management', icon: '👥' },
-                { id: 'admin_academics', label: 'Academics', icon: '📚' },
-                { id: 'admin_announcements', label: 'Announcements', icon: '📢' },
-                { id: 'admin_settings', label: 'School Settings', icon: '⚙️' },
-            ] as const;
-        }
-        return [];
-    }
+// --- APP ---
+const App = () => {
+    const [user, setUser] = useState(null);
+    const [school, setSchool] = useState(null);
+    const [role, setRole] = useState(null);
+    const [userAffiliations, setUserAffiliations] = useState([]);
 
-    return (
-        <nav className="side-navbar">
-            <div className="portal-logo">
-                <ClassBridgeLogo size={32}/>
-                <span>ClassBridge</span>
-            </div>
-            <ul>
-                {getNavItems().map(item => (
-                    <li key={item.id}>
-                        <button 
-                            className={`nav-link ${activeView === item.id ? 'active' : ''}`}
-                            onClick={() => onNavigate(item.id)}
-                        >
-                            <span className="nav-icon">{item.icon}</span>
-                            <span>{item.label}</span>
-                        </button>
-                    </li>
-                ))}
-            </ul>
-        </nav>
-    );
-};
+    const [allChildren, setAllChildren] = useState(mockInitialChildren);
+    const [allNotifications, setAllNotifications] = useState(mockNotifications);
+    const [allTuitionInvoices, setAllTuitionInvoices] = useState(mockTuitionData);
 
-// --- START: NEW PORTAL PAGE COMPONENTS ---
-interface CSVProcessResult {
-    added: number;
-    updated: number;
-    errors: string[];
-}
-
-const CSVUploadResultModal: React.FC<{ result: CSVProcessResult, onClose: () => void }> = ({ result, onClose }) => (
-    <div className="modal-overlay" onClick={onClose}>
-        <div className="modal-content csv-result-modal" onClick={e => e.stopPropagation()}>
-            <div className="modal-header">
-                <h3>CSV Processing Complete</h3>
-                <button onClick={onClose} className="modal-close-button" aria-label="Close">&times;</button>
-            </div>
-            <div className="modal-body">
-                <h4>Summary</h4>
-                <p><strong>Users Added:</strong> {result.added}</p>
-                <p><strong>Users Updated:</strong> {result.updated}</p>
-                <p><strong>Errors Found:</strong> {result.errors.length}</p>
-                
-                {result.errors.length > 0 && (
-                    <div className="error-details">
-                        <h4>Error Details</h4>
-                        <ul>
-                            {result.errors.map((error, index) => <li key={index}>{error}</li>)}
-                        </ul>
-                    </div>
-                )}
-                <button onClick={onClose} className="form-button" style={{width: '100%', marginTop: '1.5rem'}}>Close</button>
-            </div>
-        </div>
-    </div>
-);
-
-
-const AdminPortalDashboard: React.FC<{ allUsers: User[], allChildren: Child[] }> = ({ allUsers, allChildren }) => {
-    const totalStudents = allChildren.length;
-    const totalTeachers = allUsers.filter(u => u.role === 'Teacher').length;
-    const totalParents = allUsers.filter(u => u.role === 'Parent').length;
-
-    return (
-        <div className="portal-page">
-            <h2>School Dashboard</h2>
-            <div className="portal-dashboard-grid">
-                <div className="dashboard-card">
-                    <h3>Total Students</h3>
-                    <p className="dashboard-card-metric">{totalStudents}</p>
-                </div>
-                <div className="dashboard-card">
-                    <h3>Total Teachers</h3>
-                    <p className="dashboard-card-metric">{totalTeachers}</p>
-                </div>
-                <div className="dashboard-card">
-                    <h3>Total Parents</h3>
-                    <p className="dashboard-card-metric">{totalParents}</p>
-                </div>
-                <div className="dashboard-card">
-                    <h3>Overall Attendance</h3>
-                    <p className="dashboard-card-metric">96.5%</p>
-                </div>
-            </div>
-            <p className="portal-page-description">An overview of school-wide analytics and key performance indicators.</p>
-        </div>
-    );
-};
-
-const AdminPortalUserManagement: React.FC<{
-    school: SchoolConfig,
-    onUpdateAllUsers: (registry: Record<string, Omit<UserRegistryEntry, 'email'>>, users: User[]) => void
-}> = ({ school, onUpdateAllUsers }) => {
-    const [searchTerm, setSearchTerm] = useState('');
-    const [roleFilter, setRoleFilter] = useState<Role | 'All'>('All');
-    const [uploadResult, setUploadResult] = useState<CSVProcessResult | null>(null);
-
-    const combinedUsers = Object.values(completeUserRegistry).flat().map(reg => {
-        const user = mockUsers.find(u => u.id === reg.userId);
-        return { ...user, ...reg };
-    });
-
-    const filteredUsers = combinedUsers.filter(user => {
-        if (user.schoolId !== school.id) return false;
-        const matchesSearch = user.name?.toLowerCase().includes(searchTerm.toLowerCase()) || user.email.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesRole = roleFilter === 'All' || user.role === roleFilter;
-        return matchesSearch && matchesRole;
-    });
-    
-    const handleDownloadTemplate = () => {
-        const header = "email,fullName,role,grade,childEmail,teacherName\n";
-        const examples = [
-            "student.new@example.com,Eva Green,Student,Grade 4,,Ms. Davis",
-            "parent.new@gmail.com,Frank Green,Parent,,,student.new@example.com",
-            "teacher.new@myschool.edu,Grace Hall,Teacher,Grade 4;Grade 5,,"
-        ].join('\n');
-        const csvContent = header + examples;
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-        const link = document.createElement("a");
-        if (link.download !== undefined) {
-            const url = URL.createObjectURL(blob);
-            link.setAttribute("href", url);
-            link.setAttribute("download", "user_template.csv");
-            link.style.visibility = 'hidden';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-    };
-
-    const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files?.[0];
-        if (!file) return;
-
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            const text = e.target?.result as string;
-            processCSV(text);
-        };
-        reader.readAsText(file);
-        event.target.value = ''; // Reset file input
-    };
-
-    const processCSV = (csvText: string) => {
-        const result: CSVProcessResult = { added: 0, updated: 0, errors: [] };
-        
-        // This is a simplified mock update. A real app would have a more robust backend process.
-        // Let's create copies to modify
-        const newRegistry = { ...mockUserRegistry };
-        const newAllUsers = [...mockUsers];
-
-        const lines = csvText.split('\n').filter(line => line.trim() !== '');
-        const headers = lines[0].split(',').map(h => h.trim());
-        
-        for (let i = 1; i < lines.length; i++) {
-            const data = lines[i].split(',').map(d => d.trim());
-            const row = Object.fromEntries(headers.map((key, index) => [key, data[index]]));
-            
-            const { email, fullName, role } = row;
-
-            if (!email || !fullName || !role) {
-                result.errors.push(`Row ${i + 1}: Missing required fields (email, fullName, role).`);
-                continue;
-            }
-
-            const existingUser = newRegistry[email.toLowerCase()];
-            if (existingUser) {
-                // Update logic
-                result.updated++;
-                // In a real app, update name, grade, etc.
-            } else {
-                // Add new user logic
-                result.added++;
-                const newUserId = Math.floor(Math.random() * 10000) + 1000; // Mock ID
-                newRegistry[email.toLowerCase()] = { userId: newUserId, role: role as Role, schoolId: school.id };
-                const newUser: User = { id: newUserId, name: fullName, role: role as Role };
-                newAllUsers.push(newUser);
-            }
-        }
-
-        // Here you would call the prop to update the global state
-        // For this demo, we'll just show the result
-        setUploadResult(result);
-        
-        // In a real scenario, you'd call:
-        // onUpdateAllUsers(newRegistry, newAllUsers);
-    };
-
-
-    return (
-        <div className="portal-page">
-            <h2>User Management</h2>
-            <p className="portal-page-description">Manage all student, parent, and teacher accounts with powerful search and filtering capabilities.</p>
-            
-            <div className="portal-section bulk-management">
-                <h3>Bulk User Management</h3>
-                <p>Download the template, fill in user details, and upload the CSV file to add or update users in bulk.</p>
-                <div className="bulk-management-actions">
-                    <button onClick={handleDownloadTemplate} className="form-button secondary">Download Template (.csv)</button>
-                    <label htmlFor="csv-upload" className="form-button">
-                        Upload CSV
-                    </label>
-                    <input type="file" id="csv-upload" accept=".csv" onChange={handleFileUpload} style={{ display: 'none' }}/>
-                </div>
-            </div>
-
-            <div className="user-management-controls">
-                <input type="text" placeholder="Search by name or email..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
-                <select value={roleFilter} onChange={e => setRoleFilter(e.target.value as Role | 'All')}>
-                    <option value="All">All Roles</option>
-                    <option value="Student">Students</option>
-                    <option value="Parent">Parents</option>
-                    <option value="Teacher">Teachers</option>
-                    <option value="Administrator">Administrators</option>
-                </select>
-            </div>
-            <div className="portal-table-container">
-                <table className="portal-table">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Role</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {filteredUsers.map(user => (
-                            <tr key={user.userId}>
-                                <td>{user.name}</td>
-                                <td>{user.email}</td>
-                                <td><span className={`role-badge role-${user.role?.toLowerCase()}`}>{user.role}</span></td>
-                                <td className="table-actions">
-                                    <button onClick={() => alert(`Editing ${user.name}...`)}>Edit</button>
-                                    <button onClick={() => alert(`Deleting ${user.name}...`)} className="delete">Delete</button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
-             {uploadResult && <CSVUploadResultModal result={uploadResult} onClose={() => setUploadResult(null)} />}
-        </div>
-    );
-};
-
-
-const TeacherPortalClasses: React.FC<{
-    teacher: Teacher;
-    school: SchoolConfig;
-    allChildren: Child[];
-    onUpdateChild: (child: Child) => void;
-    onAddReportCard: (rc: ReportCard) => void;
-}> = ({ teacher, school, allChildren, onUpdateChild, onAddReportCard }) => {
-    const [selectedGrade, setSelectedGrade] = useState<string | null>(null);
-    const [selectedStudent, setSelectedStudent] = useState<Child | null>(null);
-
-    const isSecondary = school.schoolType === 'Secondary';
-    const classes = isSecondary ? (teacher.teachesGrades || []) : Array.from(new Set(allChildren.filter(c => c.teacher === teacher.name).map(c => c.grade)));
-    
-    const studentsInSelectedGrade = allChildren.filter(child => child.grade === selectedGrade && (isSecondary || child.teacher === teacher.name));
-
+    // Apply school-specific theme when school changes
     useEffect(() => {
-        if (classes.length > 0 && !selectedGrade) {
-            setSelectedGrade(classes[0]);
+        if (school) {
+            document.documentElement.style.setProperty('--primary-color', school.primaryColor);
+            // You can set other theme variables here, e.g., font, secondary color, etc.
         }
-    }, [classes, selectedGrade]);
-    
-    useEffect(() => {
-        setSelectedStudent(null);
-    }, [selectedGrade]);
+    }, [school]);
 
-    return (
-        <div className="portal-page two-pane-layout">
-            <div className="pane-left">
-                <h3>My Classes</h3>
-                <ul className="portal-list">
-                    {classes.map(grade => (
-                        <li key={grade} className={selectedGrade === grade ? 'active' : ''} onClick={() => setSelectedGrade(grade)}>
-                            {grade}
-                        </li>
-                    ))}
-                </ul>
-                <h3>Students</h3>
-                {selectedGrade && (
-                     <ul className="portal-list">
-                        {studentsInSelectedGrade.map(student => (
-                            <li key={student.id} className={selectedStudent?.id === student.id ? 'active' : ''} onClick={() => setSelectedStudent(student)}>
-                                {student.name}
-                            </li>
-                        ))}
-                    </ul>
-                )}
-            </div>
-            <div className="pane-right">
-                {selectedStudent ? (
-                    <StudentEditorView 
-                        child={selectedStudent} 
-                        onUpdateChild={onUpdateChild} 
-                        onAddReportCard={onAddReportCard}
-                    />
-                ) : (
-                    <div className="placeholder-content">
-                        <h3>Select a student to manage their details.</h3>
-                    </div>
-                )}
-            </div>
-        </div>
-    );
-};
-
-// --- END: NEW PORTAL PAGE COMPONENTS ---
-
-
-const WebPortalContent: React.FC<{ 
-    activeView: WebPortalView; 
-    user: User;
-    school: SchoolConfig;
-    appState: AppState;
-    allChildren: Child[];
-    assignments: Assignment[];
-    onAddNotification: (title: string, message: string, recipient: Role | 'All') => void;
-    onUpdateChildren: (children: Child[]) => void;
-    onAddReportCard: (reportCard: ReportCard) => void;
-}> = ({ activeView, user, school, appState, allChildren, assignments, onAddNotification, onUpdateChildren, onAddReportCard }) => {
-    const renderContent = () => {
-        switch (activeView) {
-            // Teacher Views
-            case 'teacher_dashboard': return <div className="portal-page"><h2>Teacher Dashboard</h2><p className="portal-page-description">Welcome, {user.name}!</p></div>;
-            case 'teacher_classes': return <TeacherPortalClasses teacher={user as Teacher} school={appState.school!} allChildren={allChildren} onUpdateChild={(child) => onUpdateChildren(allChildren.map(c => c.id === child.id ? child : c))} onAddReportCard={onAddReportCard} />;
-            case 'teacher_assignments': return <div className="portal-page"><h2>Assignments</h2></div>;
-            case 'teacher_reports': return <div className="portal-page"><h2>Report Card Studio</h2></div>;
-            case 'teacher_communication': return <div className="portal-page"><h2>Communication</h2></div>;
-
-            // Admin Views
-            case 'admin_dashboard': return <AdminPortalDashboard allUsers={appState.allUsers} allChildren={allChildren} />;
-            case 'admin_users': return <AdminPortalUserManagement school={school} onUpdateAllUsers={() => { /* Mock handler */ }} />;
-            case 'admin_academics': return <div className="portal-page"><h2>Academics</h2></div>;
-            case 'admin_announcements': return <div className="portal-page"><h2>Announcements</h2><div className="portal-form-container"><AdminAnnouncements onAddNotification={onAddNotification}/></div></div>;
-            case 'admin_settings': return <div className="portal-page"><h2>School Settings</h2></div>;
-            default: return null;
-        }
-    };
-    return <>{renderContent()}</>;
-};
-
-const WebPortal: React.FC<{ 
-    user: User; 
-    school: SchoolConfig;
-    appState: AppState;
-    onExitPortal: () => void;
-    onAddNotification: (title: string, message: string, recipient: Role | 'All') => void;
-    onUpdateChildren: (children: Child[]) => void;
-    onAddReportCard: (reportCard: ReportCard) => void;
-}> = ({ user, school, appState, onExitPortal, onAddNotification, onUpdateChildren, onAddReportCard }) => {
-    
-    const initialView: WebPortalView = user.role === 'Teacher' ? 'teacher_dashboard' : 'admin_dashboard';
-    const [activeView, setActiveView] = useState<WebPortalView>(initialView);
-
-    return (
-        <div className="web-portal-container">
-            <SideNavbar role={user.role} activeView={activeView} onNavigate={setActiveView} />
-            <div className="portal-main-content">
-                <header className="portal-header">
-                     <h2>{school.name} Portal</h2>
-                     <div className="header-actions">
-                        <span>Welcome, {user.name} ({user.role})</span>
-                        <button onClick={onExitPortal} className="form-button">Exit Portal</button>
-                    </div>
-                </header>
-                <main className="portal-content-area">
-                   <WebPortalContent 
-                     activeView={activeView} 
-                     user={user}
-                     school={school}
-                     appState={appState}
-                     allChildren={appState.allChildren}
-                     assignments={appState.assignments}
-                     onAddNotification={onAddNotification}
-                     onUpdateChildren={onUpdateChildren}
-                     onAddReportCard={onAddReportCard}
-                    />
-                </main>
-            </div>
-        </div>
-    )
-};
-
-
-// --- MAIN APP COMPONENT ---
-interface AppState {
-    loggedInUser: User | null;
-    loggedInAsRole: Role | null;
-    school: SchoolConfig | null;
-    userAffiliations: UserRegistryEntry[] | null;
-    allChildren: Child[];
-    allUsers: User[];
-    notifications: Notification[];
-    reportCards: ReportCard[];
-    tuitionInvoices: TuitionInvoice[];
-    assignments: Assignment[];
-    viewingPortal: boolean;
-}
-
-const App: React.FC = () => {
-    const [appState, setAppState] = useState<AppState>({
-        loggedInUser: null,
-        loggedInAsRole: null,
-        school: null,
-        userAffiliations: null,
-        allChildren: mockInitialChildren,
-        allUsers: mockUsers,
-        notifications: mockNotifications,
-        reportCards: mockReportCards,
-        tuitionInvoices: mockTuitionData,
-        assignments: mockAssignments,
-        viewingPortal: false,
-    });
-    
-    // This effect dynamically sets the CSS variable for the primary color
-    // when the logged-in user's school changes.
-    useEffect(() => {
-        const root = document.documentElement;
-        if (appState.school) {
-            root.style.setProperty('--primary-color', appState.school.primaryColor);
-        } else {
-            root.style.setProperty('--primary-color', '#4A90E2'); // Default color
-        }
-    }, [appState.school]);
-
-
-    const handleLogin = (user: User, school: SchoolConfig, role: Role, allAffiliations: UserRegistryEntry[]) => {
-        const userNotifications = mockNotifications.filter(n => {
-            return n.recipientRole === 'All' || n.recipientRole === role;
-        });
-
-        setAppState(prev => ({ 
-            ...prev,
-            loggedInUser: user,
-            loggedInAsRole: role,
-            school: school,
-            userAffiliations: allAffiliations,
-            notifications: userNotifications,
-        }));
-    };
-    
-    const handleSwitchSchool = (schoolId: string) => {
-        if (!appState.userAffiliations) return;
-
-        const newAffiliation = appState.userAffiliations.find(aff => aff.schoolId === schoolId);
-        if (newAffiliation) {
-            const user = mockUsers.find(u => u.id === newAffiliation.userId);
-            const school = schoolConfigs[newAffiliation.schoolId];
-            if (user && school) {
-                // Re-run the login logic for the new school context
-                handleLogin(user, school, newAffiliation.role, appState.userAffiliations);
-            }
-        }
+    const handleLogin = (loggedInUser, selectedSchool, selectedRole, affiliations) => {
+        setUser(loggedInUser);
+        setSchool(selectedSchool);
+        setRole(selectedRole);
+        setUserAffiliations(affiliations);
     };
 
     const handleLogout = () => {
-        setAppState(prev => ({
-            ...prev,
-            loggedInUser: null,
-            loggedInAsRole: null,
-            school: null,
-            userAffiliations: null,
-            viewingPortal: false, // Exit portal on logout
-        }));
-    };
-
-    const handleUpdateNotifications = (updatedNotifications: Notification[]) => {
-        setAppState(prev => ({ ...prev, notifications: updatedNotifications }));
-    };
-
-    const handleAddNotification = (title: string, message: string, recipient: Role | 'All') => {
-        const newNotification: Notification = {
-            id: Date.now(),
-            title,
-            message,
-            timestamp: new Date(),
-            read: false,
-            recipientRole: recipient,
-        };
-        // This is a mock; in a real app, this would be sent to a server
-        // and pushed to relevant users. Here, we'll just add it to the global list.
-        mockNotifications.unshift(newNotification); 
-        alert('Announcement sent!');
+        setUser(null);
+        setSchool(null);
+        setRole(null);
+        setUserAffiliations([]);
+        // Reset theme to default
+        document.documentElement.style.setProperty('--primary-color', '#4A90E2');
     };
     
-    const handleUpdateChildren = (updatedChildren: Child[]) => {
-        setAppState(prev => ({ ...prev, allChildren: updatedChildren }));
-    };
-    
-    const handleAddReportCard = (newReportCard: ReportCard) => {
-        setAppState(prev => ({ ...prev, reportCards: [...prev.reportCards, newReportCard] }));
-        // Also add a notification for the parent
-        const student = appState.allChildren.find(c => c.id === newReportCard.studentId);
-        if (student) {
-            const newNotification: Notification = {
-                id: Date.now(),
-                title: 'New Report Card Published',
-                message: `${student.name}'s report card for ${newReportCard.term} is now available.`,
-                timestamp: new Date(),
-                read: false,
-                // In a real app, you'd target the specific parent. Here we simulate it.
-                recipientRole: 'Parent', 
-            };
-             mockNotifications.unshift(newNotification);
+    const handleSwitchSchool = (newSchoolId) => {
+        const newAffiliation = userAffiliations.find(aff => aff.schoolId === newSchoolId);
+        if (newAffiliation) {
+            const newSchool = schoolConfigs[newSchoolId];
+            const newUser = mockUsers.find(u => u.id === newAffiliation.userId);
+            if (newSchool && newUser) {
+                // Keep the same role, just switch context
+                setUser(newUser);
+                setSchool(newSchool);
+            }
         }
     };
 
-    const handleAddAssignment = (newAssignment: Omit<Assignment, 'id'>) => {
-        const fullAssignment = { ...newAssignment, id: Date.now() };
-        setAppState(prev => ({ ...prev, assignments: [fullAssignment, ...prev.assignments] }));
+    const handleUpdateStudent = (updatedStudent) => {
+        setAllChildren(allChildren.map(c => c.id === updatedStudent.id ? updatedStudent : c));
     };
 
-    const handleUpdateTuition = (paidInvoiceId: number) => {
-        setAppState(prev => ({
-            ...prev,
-            tuitionInvoices: prev.tuitionInvoices.map(inv => 
-                inv.id === paidInvoiceId 
-                ? { ...inv, status: 'Paid', paidDate: new Date().toISOString().split('T')[0] } 
-                : inv
+    const handleUpdateTuition = (invoiceIdToPay) => {
+        setAllTuitionInvoices(
+            allTuitionInvoices.map(inv =>
+                inv.id === invoiceIdToPay ? { ...inv, status: 'Paid', paidDate: new Date().toISOString().split('T')[0] } : inv
             )
-        }));
-    };
-
-    const { loggedInUser, loggedInAsRole, school, userAffiliations, allChildren, notifications, reportCards, tuitionInvoices, viewingPortal } = appState;
-    
-    if (viewingPortal && loggedInUser && school && (loggedInAsRole === 'Teacher' || loggedInAsRole === 'Administrator')) {
-        return (
-            <div className="container portal-active">
-                <WebPortal 
-                    user={loggedInUser} 
-                    school={school}
-                    appState={appState}
-                    onExitPortal={() => setAppState(prev => ({ ...prev, viewingPortal: false }))}
-                    onAddNotification={handleAddNotification}
-                    onUpdateChildren={handleUpdateChildren}
-                    onAddReportCard={handleAddReportCard}
-                />
-            </div>
         );
+    };
+    
+    // Filter notifications based on the current user's role
+    const relevantNotifications = allNotifications.filter(n => n.recipientRole === 'All' || n.recipientRole === role);
+
+    if (!user) {
+        return <MagicLinkLogin onLogin={handleLogin} />;
     }
 
-    return (
-        <div className="container">
-            {!loggedInUser && (
-                <header className="app-header">
-                    <h1>
-                      <SchoolLogo logoUrl={school?.logoUrl} schoolName={school?.name} />
-                      <span>{school?.name || 'ClassBridge'}</span>
-                    </h1>
-                </header>
-            )}
-            <main className={!loggedInUser ? "full-height-main" : ""}>
-                 {!loggedInUser ? (
-                    <div className="login-page-layout">
-                        <p className="tagline">Connecting your school community.</p>
-                        <MagicLinkLogin onLogin={handleLogin} />
-                    </div>
-                ) : (
-                    <>
-                        {loggedInAsRole === 'Parent' && <ParentDashboard parent={loggedInUser as Parent} school={school!} userAffiliations={userAffiliations!} allChildren={allChildren} notifications={notifications} reportCards={reportCards} tuitionInvoices={tuitionInvoices} onUpdateNotifications={handleUpdateNotifications} onUpdateTuition={handleUpdateTuition} onSwitchSchool={handleSwitchSchool} onLogout={handleLogout} />}
-                        {loggedInAsRole === 'Teacher' && <TeacherDashboard teacher={loggedInUser as Teacher} school={school!} userAffiliations={userAffiliations!} allChildren={allChildren} assignments={appState.assignments} notifications={notifications} onUpdateNotifications={handleUpdateNotifications} onUpdateChildren={handleUpdateChildren} onAddReportCard={handleAddReportCard} onAddAssignment={handleAddAssignment} onSwitchSchool={handleSwitchSchool} onEnterPortal={() => setAppState(prev => ({...prev, viewingPortal: true}))} onLogout={handleLogout} />}
-                        {loggedInAsRole === 'Student' && <StudentDashboard student={loggedInUser as Child} school={school!} userAffiliations={userAffiliations!} reportCards={reportCards} notifications={notifications} onUpdateNotifications={handleUpdateNotifications} onSwitchSchool={handleSwitchSchool} onLogout={handleLogout} />}
-                        {loggedInAsRole === 'Administrator' && <AdminDashboardMobile admin={loggedInUser} school={school!} userAffiliations={userAffiliations!} onAddNotification={handleAddNotification} onSwitchSchool={handleSwitchSchool} onLogout={handleLogout} onEnterPortal={() => setAppState(prev => ({...prev, viewingPortal: true}))} />}
-                    </>
-                )}
-            </main>
-            {!loggedInUser && <footer>&copy; {new Date().getFullYear()} ClassBridge. All rights reserved.</footer>}
-        </div>
-    );
+    const renderDashboard = () => {
+        switch (role) {
+            case 'Parent':
+                return <ParentDashboard
+                    parent={user}
+                    school={school}
+                    allChildren={allChildren}
+                    notifications={relevantNotifications}
+                    reportCards={mockReportCards}
+                    tuitionInvoices={allTuitionInvoices}
+                    userAffiliations={userAffiliations}
+                    onUpdateNotifications={setAllNotifications}
+                    onUpdateTuition={handleUpdateTuition}
+                    onSwitchSchool={handleSwitchSchool}
+                    onLogout={handleLogout}
+                />;
+            case 'Teacher':
+                return <TeacherDashboard
+                    teacher={user}
+                    school={school}
+                    allChildren={allChildren}
+                    notifications={relevantNotifications}
+                    userAffiliations={userAffiliations}
+                    onUpdateStudent={handleUpdateStudent}
+                    onUpdateNotifications={setAllNotifications}
+                    onSwitchSchool={handleSwitchSchool}
+                    onLogout={handleLogout}
+                />;
+            case 'Student':
+                return <StudentDashboard 
+                    student={user} 
+                    school={school} 
+                    notifications={relevantNotifications} 
+                    onUpdateNotifications={setAllNotifications} 
+                    onLogout={handleLogout} 
+                />;
+            case 'Administrator':
+                return <AdminDashboard admin={user} school={school} onLogout={handleLogout} />;
+            default:
+                return <div>Error: Unknown user role.</div>;
+        }
+    };
+    
+    return <div className="app-container">{renderDashboard()}</div>;
 };
 
-const container = document.getElementById('root');
-const root = createRoot(container!);
+
+// Render the app
+const root = createRoot(document.getElementById('root') as HTMLElement);
 root.render(<App />);

@@ -10,19 +10,13 @@
     <!-- Theme color for browser UI -->
     <meta name="theme-color" content="#4A90E2" />
   
-    <!-- 1. Babel: Must be in the head to be ready to transpile -->
+    <!-- 1. UMD Scripts: Load React and ReactDOM as global variables. This is the single, robust method for loading React. -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    
+    <!-- 2. Babel: Must be ready to transpile the app script. -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-    <!-- 2. Import Map: Defines how modules are loaded -->
-    <script type="importmap">
-    {
-      "imports": {
-        "react": "https://aistudiocdn.com/react@^19.2.0",
-        "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
-        "react/": "https://aistudiocdn.com/react@^19.2.0/"
-      }
-    }
-    </script>
 </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
@@ -40,7 +34,7 @@
         });
       }
     </script>
-    <!-- 3. App Script: Moved to the end of the body to ensure #root exists before execution -->
-    <script type="text/babel" data-type="module" data-presets="react,typescript" src="index.tsx"></script>
+    <!-- 3. App Script: Uses `text/babel` and will use the global React/ReactDOM objects provided above. -->
+    <script type="text/babel" data-presets="react,typescript" src="index.tsx"></script>
   </body>
 </html>

@@ -7,17 +7,18 @@
     <link rel="stylesheet" href="index.css" />
     <!-- PWA Manifest -->
     <link rel="manifest" href="manifest.json" />
+    <!-- Favicon: Shows the logo in the browser tab -->
+    <link rel="icon" type="image/png" href="https://storage.googleapis.com/maker-studio-project-media-prod/media/20240502111105151528-5e2ea7a6c9e9.png" />
     <!-- Theme color for browser UI -->
     <meta name="theme-color" content="#4A90E2" />
   
-    <!-- 1. UMD Scripts: Load React and ReactDOM as global variables. This is the single, robust method for loading React. -->
+    <!-- 1. UMD Scripts: Load React and ReactDOM as global variables. -->
     <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
     
-    <!-- 2. Babel: Must be ready to transpile the app script. -->
+    <!-- 2. Babel: Transpile the app script. -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
-</head>
+ </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
@@ -34,7 +35,7 @@
         });
       }
     </script>
-    <!-- 3. App Script: Uses `text/babel` and will use the global React/ReactDOM objects provided above. -->
+    <!-- 3. App Script -->
     <script type="text/babel" data-presets="react,typescript" src="index.tsx"></script>
   </body>
 </html>

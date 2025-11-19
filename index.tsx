@@ -1,4 +1,3 @@
-
 // Ensure we are using the global React/ReactDOM variables loaded via UMD in index.html
 const React = (window as any).React;
 const ReactDOM = (window as any).ReactDOM;
@@ -63,7 +62,8 @@ interface UserRegistryEntry {
     email: string;
 }
 
-// --- NEW CONFIGURATION-BASED SCHOOL DEFINITIONS ---
+// --- CONFIGURATION-BASED SCHOOL DEFINITIONS (학교 설정) ---
+// 여기에 각 학교의 정보와 로고를 설정합니다.
 const schoolConfigs: Record<string, SchoolConfig> = {
     'ea': {
         id: 'ea',
@@ -85,11 +85,16 @@ const schoolConfigs: Record<string, SchoolConfig> = {
             schoolBusTracking: false,
         },
     },
+    // ▼ Life-Prep Academy 설정 (여기서 로고를 바꾸세요) ▼
     'lpa': {
         id: 'lpa',
         name: 'Life-Prep Academy',
-        primaryColor: '#002D62', // Dark, academic blue from logo
-        logoUrl: 'https://storage.googleapis.com/maker-studio-project-media-prod/media/20240503063821815198-1d145f8e0797.png',
+        primaryColor: '#002D62', // 학교의 고유 색상 (네이비 블루 등)
+        
+        // ★ 중요: 아래 따옴표('') 안에 실제 학교 로고 이미지 주소(URL)를 넣으세요.
+        // 이미지가 없다면 인터넷에 업로드 후 주소를 따와야 합니다.
+        logoUrl: 'https://lpa.edu.np/wp-content/uploads/2024/04/lifePrep.jpg',
+        
         schoolType: 'Secondary',
         features: {
             schoolBusTracking: false,
@@ -99,8 +104,8 @@ const schoolConfigs: Record<string, SchoolConfig> = {
     'eis': {
         id: 'eis',
         name: 'Everest International School',
-        primaryColor: '#0077c2', // A professional, sky blue
-        logoUrl: 'https://storage.googleapis.com/maker-studio-project-media-prod/media/20240502111105151528-5e2ea7a6c9e9.png', // Using a similar logo for demo
+        primaryColor: '#0077c2', 
+        logoUrl: 'https://storage.googleapis.com/maker-studio-project-media-prod/media/20240502111105151528-5e2ea7a6c9e9.png',
         schoolType: 'Elementary',
         features: {
             schoolBusTracking: true,
@@ -160,7 +165,8 @@ const mockUserRegistry: Record<string, Omit<UserRegistryEntry, 'email'> | Omit<U
 };
 
 // Add email to registry entries, handling both single and array entries
-const completeUserRegistry = Object.entries(mockUserRegistry).reduce((acc, [email, data]) => {
+const completeUserRegistry = Object.keys(mockUserRegistry).reduce((acc, email) => {
+    const data = mockUserRegistry[email];
     if (Array.isArray(data)) {
         acc[email] = data.map(d => ({ ...d, email }));
     } else {
@@ -1689,6 +1695,7 @@ const TeacherDashboard = ({ teacher, school, allChildren, notifications, userAff
 // --- STUDENT DASHBOARD COMPONENTS ---
 const StudentTimetableView = ({ timetable }: { timetable: TimetableEntry[] }) => {
     const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    // Explicitly type the accumulator to avoid implicit any errors
     const entriesByDay = days.reduce((acc: Record<string, TimetableEntry[]>, day) => {
         const dayEntries = timetable.filter(entry => entry.day === day).sort((a,b) => a.time.localeCompare(b.time));
         if (dayEntries.length > 0) {
@@ -1701,12 +1708,9 @@ const StudentTimetableView = ({ timetable }: { timetable: TimetableEntry[] }) =>
         <div className="detail-section">
             <h3 className="dashboard-subtitle">My Timetable</h3>
             <div className="timetable-view">
-                 {Object.entries(entriesByDay).map(([day, entries]) => {
-                    const currentEntries = entries as TimetableEntry[];
-                    const dayKey = day as string;
-                    return (
-                        <div key={dayKey} className="timetable-day">
-                            <h4>{dayKey}</h4>
+                 {Object.entries(entriesByDay).map(([day, currentEntries]) => (
+                        <div key={day} className="timetable-day">
+                            <h4>{day}</h4>
                             <ul>
                                 {currentEntries.map((entry, index: number) => (
                                     <li key={index} className="timetable-entry">
@@ -1719,8 +1723,8 @@ const StudentTimetableView = ({ timetable }: { timetable: TimetableEntry[] }) =>
                                 ))}
                             </ul>
                         </div>
-                    );
-                 })}
+                    )
+                 )}
             </div>
         </div>
     );

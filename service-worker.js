@@ -1,11 +1,12 @@
 
-const CACHE_NAME = 'classbridge-cache-v9';
+const CACHE_NAME = 'classbridge-cache-v10';
 const urlsToCache = [
   '/',
   '/index.html',
   '/index.css',
   '/index.tsx',
-  'https://storage.googleapis.com/maker-studio-project-media-prod/media/20240502111105151528-5e2ea7a6c9e9.png'
+  '/icon-192.png',
+  '/icon-512.png'
 ];
 
 self.addEventListener('install', event => {

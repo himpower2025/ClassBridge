@@ -11,10 +11,10 @@ console.log("ClassBridge App Starting... React Version:", React.version);
 
 type Role = 'Student' | 'Parent' | 'Teacher' | 'Administrator';
 
-// --- UPDATED LOGO COMPONENT (Uses PNG from Manifest) ---
+// --- UPDATED LOGO COMPONENT (Uses Local PNG) ---
 const ClassBridgeLogo = ({ size = 64 }) => {
-    // Use the high-quality PNG from the manifest
-    const logoUrl = "https://storage.googleapis.com/maker-studio-project-media-prod/media/20240502111105151528-5e2ea7a6c9e9.png";
+    // Use the local high-quality PNG
+    const logoUrl = "icon-512.png";
     
     return (
         <img 
@@ -70,7 +70,7 @@ const schoolConfigs: Record<string, SchoolConfig> = {
         id: 'ea',
         name: 'Everest Academy',
         primaryColor: '#4A90E2',
-        logoUrl: 'https://storage.googleapis.com/maker-studio-project-media-prod/media/20240502111105151528-5e2ea7a6c9e9.png',
+        logoUrl: 'icon-192.png', // Using local file
         schoolType: 'Elementary',
         features: {
             schoolBusTracking: true,
@@ -80,7 +80,7 @@ const schoolConfigs: Record<string, SchoolConfig> = {
         id: 'his',
         name: 'Himalayan International School',
         primaryColor: '#34A853',
-        logoUrl: 'https://storage.googleapis.com/maker-studio-project-media-prod/media/20240502111109018449-31742a23330f.png',
+        logoUrl: 'https://storage.googleapis.com/maker-studio-project-media-prod/media/20240502111109018449-31742a23330f.png', // Keeping this distinct one or you can change to local if preferred
         schoolType: 'Secondary',
         features: {
             schoolBusTracking: false,
@@ -107,7 +107,7 @@ const schoolConfigs: Record<string, SchoolConfig> = {
         id: 'eis',
         name: 'Everest International School',
         primaryColor: '#0077c2', 
-        logoUrl: 'https://storage.googleapis.com/maker-studio-project-media-prod/media/20240502111105151528-5e2ea7a6c9e9.png',
+        logoUrl: 'icon-192.png', // Using local file
         schoolType: 'Elementary',
         features: {
             schoolBusTracking: true,
@@ -1710,11 +1710,14 @@ const StudentTimetableView = ({ timetable }: { timetable: TimetableEntry[] }) =>
         <div className="detail-section">
             <h3 className="dashboard-subtitle">My Timetable</h3>
             <div className="timetable-view">
-                 {Object.entries(entriesByDay).map(([day, currentEntries]: [string, TimetableEntry[]]) => (
+                 {days.map((day) => {
+                    const currentEntries: TimetableEntry[] = entriesByDay[day];
+                    if (!currentEntries) return null;
+                    return (
                         <div key={day} className="timetable-day">
                             <h4>{day}</h4>
                             <ul>
-                                {currentEntries.map((entry, index: number) => (
+                                {currentEntries.map((entry: TimetableEntry, index: number) => (
                                     <li key={index} className="timetable-entry">
                                         <span className="entry-time">{entry.time}</span>
                                         <div className="entry-details">
@@ -1725,8 +1728,8 @@ const StudentTimetableView = ({ timetable }: { timetable: TimetableEntry[] }) =>
                                 ))}
                             </ul>
                         </div>
-                    )
-                 )}
+                    );
+                 })}
             </div>
         </div>
     );

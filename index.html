@@ -7,12 +7,12 @@
     <title>ClassBridge</title>
     <link rel="stylesheet" href="index.css" />
     
-    <!-- PWA Manifest: Updated version to v9 to force new icon settings -->
-    <link rel="manifest" href="manifest.json?v=9_fix_icon_display" />
+    <!-- PWA Manifest: Updated version to v10 for local icons -->
+    <link rel="manifest" href="manifest.json?v=10_local_icons" />
     
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="https://storage.googleapis.com/maker-studio-project-media-prod/media/20240502111105151528-5e2ea7a6c9e9.png" />
-    <link rel="apple-touch-icon" href="https://storage.googleapis.com/maker-studio-project-media-prod/media/20240502111105151528-5e2ea7a6c9e9.png" />
+    <!-- Favicon: Using local file -->
+    <link rel="icon" type="image/png" href="icon-192.png" />
+    <link rel="apple-touch-icon" href="icon-192.png" />
     
     <!-- Mobile Web App Meta Tags -->
     <meta name="mobile-web-app-capable" content="yes">
@@ -25,7 +25,6 @@
     
     <!-- 2. Babel -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
 </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
@@ -35,8 +34,6 @@
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.getRegistrations().then(function(registrations) {
             for(let registration of registrations) {
-                // Consider unregistering if you want a hard reset, 
-                // but updating is usually sufficient if cache name changes.
                 registration.update();
             }
         });

@@ -18,21 +18,9 @@
     },
     {
       "src": "https://storage.googleapis.com/maker-studio-project-media-prod/media/20240502111105151528-5e2ea7a6c9e9.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "maskable"
-    },
-    {
-      "src": "https://storage.googleapis.com/maker-studio-project-media-prod/media/20240502111105151528-5e2ea7a6c9e9.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
-    },
-    {
-      "src": "https://storage.googleapis.com/maker-studio-project-media-prod/media/20240502111105151528-5e2ea7a6c9e9.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "maskable"
     }
   ]
 }

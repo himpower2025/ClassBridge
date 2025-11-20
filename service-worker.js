@@ -1,5 +1,5 @@
 
-const CACHE_NAME = 'classbridge-cache-v8';
+const CACHE_NAME = 'classbridge-cache-v9';
 const urlsToCache = [
   '/',
   '/index.html',

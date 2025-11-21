@@ -45,15 +45,65 @@ body {
 
 /* --- Navigation --- */
 .bottom-nav-container { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 1000; width: auto; }
+
 .floating-nav {
-    display: flex; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px);
-    padding: 0.5rem 1.5rem; border-radius: 50px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-    border: 1px solid rgba(255, 255, 255, 0.5); gap: 2rem;
+    display: flex; 
+    background: rgba(255, 255, 255, 0.95); 
+    backdrop-filter: blur(12px);
+    padding: 0.5rem 2rem; 
+    border-radius: 50px; 
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.5); 
+    gap: 2rem;
+    align-items: center;
 }
-.nav-item { background: none; border: none; cursor: pointer; padding: 0.5rem; display: flex; align-items: center; justify-content: center; color: #aaa; }
-.nav-icon { font-size: 1.6rem; transition: transform 0.2s ease; }
-.nav-item.active { color: var(--primary-color); }
-.nav-item.active .nav-icon { transform: translateY(-3px); }
+
+.nav-item { 
+    position: relative;
+    background: none; 
+    border: none; 
+    cursor: pointer; 
+    padding: 0.6rem; 
+    display: flex; 
+    flex-direction: column;
+    align-items: center; 
+    justify-content: center; 
+    color: #b0b0b0; 
+    transition: all 0.3s ease;
+}
+
+.nav-icon { 
+    font-size: 1.6rem; 
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Active State Styles */
+.nav-item.active { 
+    color: var(--primary-color); 
+}
+
+.nav-item.active .nav-icon { 
+    transform: translateY(-4px); 
+}
+
+/* Dot Indicator */
+.nav-item::after {
+    content: '';
+    position: absolute;
+    bottom: 2px;
+    width: 5px;
+    height: 5px;
+    background-color: var(--primary-color);
+    border-radius: 50%;
+    opacity: 0;
+    transform: scale(0);
+    transition: all 0.3s ease;
+}
+
+.nav-item.active::after {
+    opacity: 1;
+    transform: scale(1);
+}
 
 /* --- Layouts --- */
 .dashboard-container { max-width: 800px; margin: 0 auto; animation: fadeIn 0.5s ease-out; }

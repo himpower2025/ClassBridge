@@ -11,31 +11,9 @@ console.log("ClassBridge App Starting... React Version:", React.version);
 
 type Role = 'Student' | 'Parent' | 'Teacher' | 'Administrator';
 
-// --- UPDATED LOGO COMPONENT (SVG Version) ---
-// 로고 이미지가 깨지는 문제를 방지하기 위해 SVG 코드로 직접 그립니다.
-const ClassBridgeLogo = ({ size = 64 }) => {
-    return (
-        <div style={{ 
-            width: size, 
-            height: size, 
-            display: 'flex', 
-            alignItems: 'center', 
-            justifyContent: 'center', 
-            backgroundColor: 'var(--primary-color)', 
-            borderRadius: size * 0.2, 
-            color: 'white',
-            margin: '0 auto'
-        }}>
-            <svg width={size * 0.6} height={size * 0.6} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
-                <path d="M6 12v5c3 3 9 3 12 0v-5" />
-            </svg>
-        </div>
-    );
-};
+// --- COMPONENTS ---
 
-// --- NEW SCHOOL-SPECIFIC LOGO COMPONENT ---
-// 학교 로고 URL이 깨질 경우 자동으로 기본 로고를 보여주도록 수정했습니다.
+// 학교 로고 컴포넌트 (이미지 로드 실패 시 텍스트 표시)
 const SchoolLogo = ({ logoUrl, schoolName }) => {
     const [imgError, setImgError] = useState(false);
 
@@ -49,8 +27,23 @@ const SchoolLogo = ({ logoUrl, schoolName }) => {
             />
         );
     }
-    // Fallback to the generic ClassBridge logo
-    return <ClassBridgeLogo size={40} />;
+    // Fallback text logo
+    return (
+        <div style={{ 
+            fontWeight: 'bold', 
+            color: 'var(--primary-color)', 
+            border: '2px solid var(--primary-color)',
+            borderRadius: '50%',
+            width: '40px',
+            height: '40px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '1.2rem'
+        }}>
+            {schoolName.charAt(0)}
+        </div>
+    );
 };
 
 
@@ -128,11 +121,24 @@ const mockUserRegistry: Record<string, Omit<UserRegistryEntry, 'email'> | Omit<U
     'ms.davis@everest-academy.edu': { userId: 101, role: 'Teacher', schoolId: 'ea' },
     'principal.evans@everest-academy.edu': { userId: 999, role: 'Administrator', schoolId: 'ea' },
     'chen.admin@everest-academy.edu': { userId: 998, role: 'Administrator', schoolId: 'ea' },
+    
     // Himalayan International School Users
     'emily.park@example.com': { userId: 2, role: 'Student', schoolId: 'his' },
     'sarah.park@yahoo.com': { userId: 202, role: 'Parent', schoolId: 'his' },
     'mr.lee@himalayan.edu': { userId: 102, role: 'Teacher', schoolId: 'his' },
-    // New Students & Parents for Ms. Davis's Class
+    
+    // Life-Prep Academy Users (Requested for Testing)
+    'ben.carter@lpa.edu': { userId: 11, role: 'Student', schoolId: 'lpa' },
+    'susan.carter@gmail.com': { userId: 211, role: 'Parent', schoolId: 'lpa' },
+    'dr.wallace@lpa.edu': { userId: 106, role: 'Teacher', schoolId: 'lpa' },
+    'principal.lpa@lpa.edu': { userId: 997, role: 'Administrator', schoolId: 'lpa' }, // New Admin for LPA
+
+    // Everest International School Users (New)
+    'aarav.sharma@example.com': { userId: 12, role: 'Student', schoolId: 'eis' },
+    'prakash.sharma@gmail.com': { userId: 212, role: 'Parent', schoolId: 'eis' },
+    'mrs.thapa@eis.edu.np': { userId: 107, role: 'Teacher', schoolId: 'eis' },
+    
+    // Other Test Users...
     'liam.chen@example.com': { userId: 3, role: 'Student', schoolId: 'ea' },
     'david.chen@gmail.com': { userId: 203, role: 'Parent', schoolId: 'ea' },
     'olivia.garcia@example.com': { userId: 4, role: 'Student', schoolId: 'ea' },
@@ -141,7 +147,6 @@ const mockUserRegistry: Record<string, Omit<UserRegistryEntry, 'email'> | Omit<U
     'james.rodriguez@hotmail.com': { userId: 205, role: 'Parent', schoolId: 'ea' },
     'sophia.miller@example.com': { userId: 6, role: 'Student', schoolId: 'ea' },
     'linda.m@gmail.com': { userId: 206, role: 'Parent', schoolId: 'ea' },
-    // New Secondary Students & Parents for Mr. Lee
     'rohan.sharma@example.com': { userId: 7, role: 'Student', schoolId: 'his' },
     'vikram.sharma@gmail.com': { userId: 207, role: 'Parent', schoolId: 'his' },
     'priya.patel@example.com': { userId: 8, role: 'Student', schoolId: 'his' },
@@ -150,17 +155,9 @@ const mockUserRegistry: Record<string, Omit<UserRegistryEntry, 'email'> | Omit<U
     'raj.gupta@hotmail.com': { userId: 209, role: 'Parent', schoolId: 'his' },
     'anjali.singh@example.com': { userId: 10, role: 'Student', schoolId: 'his' },
     'meera.singh@gmail.com': { userId: 210, role: 'Parent', schoolId: 'his' },
-    // Life-Prep Academy Users
-    'ben.carter@lpa.edu': { userId: 11, role: 'Student', schoolId: 'lpa' },
-    'susan.carter@gmail.com': { userId: 211, role: 'Parent', schoolId: 'lpa' },
-    'dr.wallace@lpa.edu': { userId: 106, role: 'Teacher', schoolId: 'lpa' },
-    // Everest International School Users (New)
-    'aarav.sharma@example.com': { userId: 12, role: 'Student', schoolId: 'eis' },
-    'prakash.sharma@gmail.com': { userId: 212, role: 'Parent', schoolId: 'eis' },
-    'mrs.thapa@eis.edu.np': { userId: 107, role: 'Teacher', schoolId: 'eis' },
-    // FIX: Add user registry entry for student with ID 13 to ensure data consistency.
     'zoe.r@example.com': { userId: 13, role: 'Student', schoolId: 'his' },
-    // --- NEW MULTI-SCHOOL USERS ---
+    
+    // Multi-School Users
     'teacher.multi@example.com': [
         { userId: 105, role: 'Teacher', schoolId: 'ea' },
         { userId: 105, role: 'Teacher', schoolId: 'lpa' },
@@ -562,6 +559,7 @@ const mockParents: Parent[] = [
 const mockAdmins: User[] = [
     { id: 999, name: 'Principal Evans', role: 'Administrator' },
     { id: 998, name: 'Ms. Chen', role: 'Administrator' },
+    { id: 997, name: 'Principal Taylor', role: 'Administrator' }, // LPA Admin
 ];
 
 const mockUsers: User[] = [...mockInitialChildren, ...mockParents, ...mockTeachers, ...mockAdmins];
@@ -714,16 +712,25 @@ const MagicLinkLogin = ({ onLogin }) => {
                 setError('Configuration error: User or School not found.');
             }
         } else {
-            setError('User not found. Please try: charles.kim@gmail.com');
+            setError('User not found. Please try one of the demo accounts below.');
         }
     };
 
     return (
         <div className="universal-login-container">
-            <div style={{ marginBottom: '2rem' }}>
-                <ClassBridgeLogo size={80} />
+            <div style={{ marginBottom: '1.5rem' }}>
+                {/* ClassBridge Logo SVG */}
+                <svg width="80" height="80" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" style={{margin:'0 auto'}}>
+                    {/* Left Bracket */}
+                    <path d="M35 25 C 20 40, 20 60, 35 75" stroke="#546E7A" strokeWidth="8" strokeLinecap="round" fill="none"/>
+                    {/* Right Bracket */}
+                    <path d="M65 25 C 80 40, 80 60, 65 75" stroke="#546E7A" strokeWidth="8" strokeLinecap="round" fill="none"/>
+                    {/* Center Diamond */}
+                    <path d="M50 40 L 57 50 L 50 60 L 43 50 Z" fill="#50E3C2" />
+                </svg>
+                <h2 style={{margin: '0.5rem 0', color: '#333', fontSize: '1.8rem'}}>ClassBridge</h2>
             </div>
-            <h2 style={{margin: '1rem 0'}}>Welcome Back</h2>
+            
             <p style={{color: '#666', marginBottom: '2rem'}}>Enter your email to sign in</p>
             <form onSubmit={handleSubmit}>
                 <input
@@ -736,8 +743,16 @@ const MagicLinkLogin = ({ onLogin }) => {
                 <button type="submit" className="form-button">Sign In</button>
                 {error && <p className="error-message">{error}</p>}
             </form>
-            <div style={{marginTop: '2rem', fontSize: '0.8rem', color: '#ccc'}}>
-                Try: charles.kim@gmail.com (Parent)
+            
+            {/* Demo Credentials Display for Testing */}
+            <div style={{marginTop: '2rem', textAlign: 'left', fontSize: '0.85rem', color: '#555', background: '#f5f5f5', padding: '1rem', borderRadius: '12px'}}>
+                <div style={{fontWeight: '700', marginBottom: '0.5rem', color: '#333'}}>Life-Prep Academy Demo Accounts:</div>
+                <ul style={{paddingLeft: '1.2rem', margin: '0'}}>
+                    <li style={{marginBottom:'4px'}}><strong>Student:</strong> ben.carter@lpa.edu</li>
+                    <li style={{marginBottom:'4px'}}><strong>Parent:</strong> susan.carter@gmail.com</li>
+                    <li style={{marginBottom:'4px'}}><strong>Teacher:</strong> dr.wallace@lpa.edu</li>
+                    <li><strong>Admin:</strong> principal.lpa@lpa.edu</li>
+                </ul>
             </div>
         </div>
     );
@@ -945,6 +960,17 @@ const App = () => {
             return <TeacherDashboard teacher={user} school={school} allChildren={allChildren} onLogout={handleLogout} />;
         case 'Student':
             return <StudentDashboard student={user} school={school} onLogout={handleLogout} />;
+        case 'Administrator':
+             return (
+                <div className="dashboard-container">
+                    <CleanHeader school={school} onLogout={handleLogout} />
+                    <WelcomeSection userName={user.name} role="Administrator" />
+                    <div className="detail-section">
+                        <h3>Administrator Dashboard</h3>
+                        <p>Welcome, Principal. School metrics loading...</p>
+                    </div>
+                </div>
+             );
         default:
             return <div style={{padding:'2rem'}}>Unknown Role</div>;
     }

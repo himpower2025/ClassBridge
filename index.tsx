@@ -768,12 +768,12 @@ const MagicLinkLogin = ({ onLogin }) => {
 
     return (
         <div className="universal-login-container">
-            <div style={{ marginBottom: '1.5rem' }}>
-                 <svg width="80" height="80" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" style={{margin:'0 auto'}}>
-                    <path d="M35 25 C 20 40, 20 60, 35 75" stroke="#546E7A" strokeWidth="8" strokeLinecap="round" fill="none"/>
-                    <path d="M65 25 C 80 40, 80 60, 65 75" stroke="#546E7A" strokeWidth="8" strokeLinecap="round" fill="none"/>
-                    <path d="M50 40 L 57 50 L 50 60 L 43 50 Z" fill="#50E3C2" />
-                </svg>
+            <div style={{ marginBottom: '1.5rem', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                 <img 
+                    src="icon-512.png" 
+                    alt="ClassBridge Logo" 
+                    style={{ height: '120px', width: '120px', marginBottom: '1rem', borderRadius: '24px', boxShadow: '0 10px 20px rgba(0,0,0,0.1)' }}
+                />
                 <h2 style={{margin: '0.5rem 0', color: '#333', fontSize: '1.8rem'}}>ClassBridge</h2>
             </div>
             

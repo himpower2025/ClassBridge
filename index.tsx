@@ -11,33 +11,45 @@ console.log("ClassBridge App Starting... React Version:", React.version);
 
 type Role = 'Student' | 'Parent' | 'Teacher' | 'Administrator';
 
-// --- UPDATED LOGO COMPONENT (Uses Local PNG) ---
+// --- UPDATED LOGO COMPONENT (SVG Version) ---
+// 로고 이미지가 깨지는 문제를 방지하기 위해 SVG 코드로 직접 그립니다.
 const ClassBridgeLogo = ({ size = 64 }) => {
-    // Use the local high-quality PNG
-    const logoUrl = "icon-512.png";
-    
     return (
-        <img 
-            src={logoUrl} 
-            alt="ClassBridge Logo" 
-            className="classbridge-logo"
-            style={{ 
-                width: size, 
-                height: size, 
-                objectFit: 'contain',
-                borderRadius: '12px',
-                display: 'block' // Removes inline spacing issues
-            }} 
-        />
+        <div style={{ 
+            width: size, 
+            height: size, 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center', 
+            backgroundColor: 'var(--primary-color)', 
+            borderRadius: size * 0.2, 
+            color: 'white',
+            margin: '0 auto'
+        }}>
+            <svg width={size * 0.6} height={size * 0.6} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+                <path d="M6 12v5c3 3 9 3 12 0v-5" />
+            </svg>
+        </div>
     );
 };
 
 // --- NEW SCHOOL-SPECIFIC LOGO COMPONENT ---
+// 학교 로고 URL이 깨질 경우 자동으로 기본 로고를 보여주도록 수정했습니다.
 const SchoolLogo = ({ logoUrl, schoolName }) => {
-    if (logoUrl) {
-        return <img src={logoUrl} alt={`${schoolName} Logo`} className="school-logo-image" />;
+    const [imgError, setImgError] = useState(false);
+
+    if (logoUrl && !imgError) {
+        return (
+            <img 
+                src={logoUrl} 
+                alt={`${schoolName}`} 
+                className="school-logo-image" 
+                onError={() => setImgError(true)}
+            />
+        );
     }
-    // Fallback to the generic ClassBridge logo if no specific URL is provided
+    // Fallback to the generic ClassBridge logo
     return <ClassBridgeLogo size={40} />;
 };
 
@@ -64,13 +76,12 @@ interface UserRegistryEntry {
 }
 
 // --- CONFIGURATION-BASED SCHOOL DEFINITIONS (학교 설정) ---
-// 여기에 각 학교의 정보와 로고를 설정합니다.
 const schoolConfigs: Record<string, SchoolConfig> = {
     'ea': {
         id: 'ea',
         name: 'Everest Academy',
         primaryColor: '#4A90E2',
-        logoUrl: 'icon-192.png', // Using local file
+        logoUrl: '', // Empty to test fallback
         schoolType: 'Elementary',
         features: {
             schoolBusTracking: true,
@@ -80,34 +91,28 @@ const schoolConfigs: Record<string, SchoolConfig> = {
         id: 'his',
         name: 'Himalayan International School',
         primaryColor: '#34A853',
-        logoUrl: 'https://storage.googleapis.com/maker-studio-project-media-prod/media/20240502111109018449-31742a23330f.png', // Keeping this distinct one or you can change to local if preferred
+        logoUrl: 'https://storage.googleapis.com/maker-studio-project-media-prod/media/20240502111109018449-31742a23330f.png', 
         schoolType: 'Secondary',
         features: {
             schoolBusTracking: false,
         },
     },
-    // ▼▼▼ Life-Prep Academy 설정 (여기서 로고를 바꾸세요) ▼▼▼
     'lpa': {
         id: 'lpa',
         name: 'Life-Prep Academy',
-        primaryColor: '#002D62', // 학교의 고유 색상 (네이비 블루 등)
-        
-        // ★★★ 중요: 아래 따옴표('') 안에 실제 학교 로고 이미지 주소(URL)를 넣으세요. ★★★
-        // 로고가 안 보인다면 이미지 주소가 정확한지 인터넷 주소창에 넣어 확인해보세요.
+        primaryColor: '#002D62', 
         logoUrl: 'https://lpa.edu.np/wp-content/uploads/2024/04/lifePrep.jpg',
-        
         schoolType: 'Secondary',
         features: {
             schoolBusTracking: false,
-            collegeCounselingPortal: true, // Custom feature for this school
+            collegeCounselingPortal: true,
         },
     },
-    // ▲▲▲ 여기까지 ▲▲▲
     'eis': {
         id: 'eis',
         name: 'Everest International School',
         primaryColor: '#0077c2', 
-        logoUrl: 'icon-192.png', // Using local file
+        logoUrl: '',
         schoolType: 'Elementary',
         features: {
             schoolBusTracking: true,
@@ -243,7 +248,6 @@ interface Teacher extends User {
 
 interface Child extends User {
   role: 'Student';
-  // FIX: Add email property to Child interface to resolve type errors.
   email: string;
   parentId: number;
   grade: string;
@@ -388,7 +392,7 @@ const mockInitialChildren: Child[] = [
     role: 'Student',
     parentId: 206,
     grade: 'Grade 5',
-    teacher: 'Ms. Davis', // Changed to Ms. Davis to be consistent
+    teacher: 'Ms. Davis', 
     grades: [
       { subject: 'Mathematics', score: 'B' },
       { subject: 'Science', score: 'B+' },

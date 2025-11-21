@@ -148,16 +148,17 @@ body {
     border-radius: 50%;
 }
 
-/* --- Login Screen --- */
+/* --- Login Screen (Mobile Optimized) --- */
 .universal-login-container {
-    max-width: 400px;
-    margin: 10vh auto;
+    width: 90%; /* 모바일에서 화면 꽉 차지 않게 */
+    max-width: 400px; /* PC에서 너무 커지지 않게 제한 */
+    margin: 10vh auto; /* 수직 중앙 정렬 느낌 */
     padding: 2rem;
     background: white;
     border-radius: 24px;
     box-shadow: 0 20px 50px rgba(0,0,0,0.1);
     text-align: center;
-    width: 90%;
+    box-sizing: border-box; /* 패딩 포함 크기 계산 */
 }
 
 .form-button {
@@ -194,6 +195,12 @@ input {
 input:focus {
     border-color: var(--primary-color);
     background: white;
+}
+
+.error-message {
+    color: var(--error-color);
+    margin-top: 1rem;
+    font-size: 0.9rem;
 }
 
 /* --- Cards & Layouts --- */

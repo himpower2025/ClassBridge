@@ -777,12 +777,16 @@ const MagicLinkLogin = ({ onLogin }) => {
                     alignItems: 'center', 
                     justifyContent: 'center'
                  }}>
-                    {/* High-fidelity SVG logo matching the ClassBridge branding exactly */}
-                    <svg width="100%" height="100%" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M45 45 Q 90 100 45 155" stroke="#546e7a" strokeWidth="32" strokeLinecap="round" strokeLinejoin="round"/>
-                        <path d="M155 45 Q 110 100 155 155" stroke="#546e7a" strokeWidth="32" strokeLinecap="round" strokeLinejoin="round"/>
-                        <path d="M100 70 L125 100 L100 130 L75 100 Z" fill="#2dd4bf" />
-                    </svg>
+                    <img 
+                        src="icon-512.png" 
+                        alt="ClassBridge Logo" 
+                        style={{ 
+                            width: '100%', 
+                            height: '100%', 
+                            objectFit: 'contain',
+                            borderRadius: '28px'
+                        }} 
+                    />
                  </div>
                 <h2 style={{margin: '0.5rem 0', color: '#333', fontSize: '1.8rem'}}>ClassBridge</h2>
             </div>

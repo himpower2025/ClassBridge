@@ -780,24 +780,23 @@ const MagicLinkLogin = ({ onLogin }) => {
                  }}>
                     {!logoError ? (
                         <img 
-                            src="icon-512.png" 
+                            src="/icon-512.png" 
                             alt="ClassBridge Logo" 
                             style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-                            onError={() => {
-                                console.log("Failed to load icon-512.png, switching to SVG fallback");
-                                setLogoError(true);
-                            }}
+                            onError={() => setLogoError(true)}
                         />
                     ) : (
-                        <svg width="100%" height="100%" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <rect width="200" height="200" rx="40" fill="transparent"/>
-                            {/* Improved Fallback Logo: Inward facing curves ) ( */}
-                            {/* Left Curve ) */}
-                            <path d="M60 50 Q 95 100 60 150" stroke="#5A6B7C" strokeWidth="20" strokeLinecap="round" fill="none" />
-                            {/* Right Curve ( */}
-                            <path d="M140 50 Q 105 100 140 150" stroke="#5A6B7C" strokeWidth="20" strokeLinecap="round" fill="none" />
-                            {/* Center Diamond */}
-                            <path d="M100 80 L115 100 L100 120 L85 100 Z" fill="#50E3C2" />
+                        <svg width="100%" height="100%" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            {/* High fidelity "Bridge" logo: Two thick curving arms coming together with a floating diamond */}
+                            
+                            {/* Left Arm: Curves from top-left inwards, then back out to bottom-left */}
+                            <path d="M130 110 Q 230 256 130 402" stroke="#546E7A" strokeWidth="45" strokeLinecap="round" fill="none" />
+                            
+                            {/* Right Arm: Curves from top-right inwards, then back out to bottom-right */}
+                            <path d="M382 110 Q 282 256 382 402" stroke="#546E7A" strokeWidth="45" strokeLinecap="round" fill="none" />
+                            
+                            {/* Center Diamond: Floating in the negative space */}
+                            <path d="M 256 196 L 300 256 L 256 316 L 212 256 Z" fill="#50E3C2" />
                         </svg>
                     )}
                  </div>

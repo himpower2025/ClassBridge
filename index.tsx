@@ -777,17 +777,10 @@ const MagicLinkLogin = ({ onLogin }) => {
                     alignItems: 'center', 
                     justifyContent: 'center'
                  }}>
-                    {/* Replaced inline SVG with the requested icon image file */}
                     <img 
                         src="icon-512.png" 
                         alt="ClassBridge Logo" 
-                        style={{
-                            width: '100%',
-                            height: '100%',
-                            borderRadius: '24px',
-                            objectFit: 'contain',
-                            boxShadow: '0 10px 25px rgba(0,0,0,0.1)'
-                        }}
+                        style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: '24px' }} 
                     />
                  </div>
                 <h2 style={{margin: '0.5rem 0', color: '#333', fontSize: '1.8rem'}}>ClassBridge</h2>

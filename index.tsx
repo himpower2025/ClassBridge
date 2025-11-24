@@ -743,7 +743,6 @@ const AdminDashboard = ({ admin, school, onLogout }) => {
 const MagicLinkLogin = ({ onLogin }) => {
     const [email, setEmail] = useState('');
     const [error, setError] = useState('');
-    const [logoError, setLogoError] = useState(false);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -771,32 +770,19 @@ const MagicLinkLogin = ({ onLogin }) => {
         <div className="universal-login-container">
             <div style={{ marginBottom: '1.5rem', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                  <div style={{ 
-                    height: '120px', 
-                    width: '120px', 
+                    height: '140px', 
+                    width: '140px', 
                     marginBottom: '1rem', 
                     display: 'flex', 
                     alignItems: 'center', 
                     justifyContent: 'center'
                  }}>
-                    {/* Try to load the image file first, fallback to refined SVG if it fails */}
-                    {!logoError ? (
-                        <img 
-                            src="icon-512.png" 
-                            alt="ClassBridge" 
-                            style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-                            onError={() => setLogoError(true)}
-                        />
-                    ) : (
-                        /* Fallback SVG matching the requested design */
-                        <svg width="100%" height="100%" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            {/* Left Curve - ) shape */}
-                            <path d="M45 40 C 80 70 80 130 45 160" stroke="#6c757d" strokeWidth="22" strokeLinecap="round" />
-                            {/* Right Curve - ( shape */}
-                            <path d="M155 40 C 120 70 120 130 155 160" stroke="#6c757d" strokeWidth="22" strokeLinecap="round" />
-                            {/* Center Diamond */}
-                            <path d="M100 75 L122 100 L100 125 L78 100 Z" fill="#50E3C2" />
-                        </svg>
-                    )}
+                    {/* High-fidelity SVG logo matching the ClassBridge branding exactly */}
+                    <svg width="100%" height="100%" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M45 45 Q 90 100 45 155" stroke="#546e7a" strokeWidth="32" strokeLinecap="round" strokeLinejoin="round"/>
+                        <path d="M155 45 Q 110 100 155 155" stroke="#546e7a" strokeWidth="32" strokeLinecap="round" strokeLinejoin="round"/>
+                        <path d="M100 70 L125 100 L100 130 L75 100 Z" fill="#2dd4bf" />
+                    </svg>
                  </div>
                 <h2 style={{margin: '0.5rem 0', color: '#333', fontSize: '1.8rem'}}>ClassBridge</h2>
             </div>

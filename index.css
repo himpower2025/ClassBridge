@@ -173,8 +173,13 @@ body {
 .form-button:active { transform: scale(0.98); box-shadow: 0 4px 10px rgba(74, 144, 226, 0.2); }
 input, select, textarea {
     width: 100%; padding: 16px; border: 1px solid #f0f0f0; border-radius: 16px;
-    background: #fcfcfc; font-size: 1rem; outline: none; margin-bottom: 12px;
+    background: #fcfcfc; font-size: 16px; /* Explicit 16px to prevent iOS zoom issues */
+    outline: none; margin-bottom: 12px;
     font-family: inherit; transition: border-color 0.2s;
+    -webkit-appearance: none; /* Remove iOS default styles */
+    appearance: none;
+    -webkit-user-select: text; /* Allow selection/focus on iOS */
+    user-select: text;
 }
 input:focus, select:focus, textarea:focus { border-color: var(--primary-color); background: white; }
 .demo-accounts { margin-top: 2rem; text-align: left; font-size: 0.85rem; color: #666; background: #f8f9fa; padding: 1.2rem; border-radius: 16px; }

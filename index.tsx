@@ -780,24 +780,17 @@ const MagicLinkLogin = ({ onLogin }) => {
                  }}>
                     {!logoError ? (
                         <img 
-                            src="/icon-512.png" 
+                            src="/logo.svg" 
                             alt="ClassBridge Logo" 
                             style={{ width: '100%', height: '100%', objectFit: 'contain' }}
                             onError={() => setLogoError(true)}
                         />
                     ) : (
-                        <svg width="100%" height="100%" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            {/* High fidelity "Bridge" logo: Two thick curving arms coming together with a floating diamond */}
-                            
-                            {/* Left Arm: Curves from top-left inwards, then back out to bottom-left */}
-                            <path d="M130 110 Q 230 256 130 402" stroke="#546E7A" strokeWidth="45" strokeLinecap="round" fill="none" />
-                            
-                            {/* Right Arm: Curves from top-right inwards, then back out to bottom-right */}
-                            <path d="M382 110 Q 282 256 382 402" stroke="#546E7A" strokeWidth="45" strokeLinecap="round" fill="none" />
-                            
-                            {/* Center Diamond: Floating in the negative space */}
-                            <path d="M 256 196 L 300 256 L 256 316 L 212 256 Z" fill="#50E3C2" />
-                        </svg>
+                        <img 
+                            src="/icon-512.png" 
+                            alt="ClassBridge Logo Fallback"
+                            style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                        />
                     )}
                  </div>
                 <h2 style={{margin: '0.5rem 0', color: '#333', fontSize: '1.8rem'}}>ClassBridge</h2>
@@ -807,6 +800,8 @@ const MagicLinkLogin = ({ onLogin }) => {
             <form onSubmit={handleSubmit}>
                 <input
                     type="email"
+                    inputMode="email"
+                    autoComplete="email"
                     value={email}
                     onChange={e => setEmail(e.target.value)}
                     placeholder="email@example.com"

@@ -291,3 +291,24 @@ input:focus, select:focus, textarea:focus { border-color: var(--primary-color); 
 .template-list { list-style: none; padding: 0; margin: 1rem 0; }
 .template-list li { margin-bottom: 8px; font-size: 0.9rem; display: flex; align-items: center; }
 .tag { background: #dfe4e8; color: #555; padding: 2px 8px; border-radius: 6px; font-size: 0.7rem; font-weight: 700; margin-right: 8px; text-transform: uppercase; }
+
+/* --- Company Branding --- */
+.company-footer {
+    text-align: center;
+    padding: 2rem 1rem;
+    color: #999;
+    font-size: 0.8rem;
+    margin-bottom: 2rem;
+}
+.company-footer strong {
+    color: #666;
+    font-weight: 600;
+}
+.powered-by {
+    margin-top: 1.5rem;
+    font-size: 0.85rem;
+    color: #888;
+}
+.powered-by strong {
+    color: var(--primary-color);
+}

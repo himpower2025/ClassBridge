@@ -202,7 +202,10 @@ const CleanHeader = ({ school, onLogout }) => (
     <header className="dashboard-header">
         <div className="header-left">
             <SchoolLogo logoUrl={school?.logoUrl} schoolName={school?.name || 'School'} />
-            <h2 className="school-name-text">{school?.name}</h2>
+            <div>
+                <h2 className="school-name-text">{school?.name}</h2>
+                <div style={{ fontSize: '0.6rem', color: '#999', marginTop: '-2px' }}>by Himpower Pvt. Ltd.</div>
+            </div>
         </div>
         <button onClick={onLogout} className="logout-icon-btn" aria-label="Logout">⏻</button>
     </header>
@@ -222,6 +225,14 @@ const FloatingNav = ({ activeTab, setActiveTab, tabs }) => (
             ))}
         </nav>
     </div>
+);
+
+const CompanyFooter = () => (
+    <footer className="company-footer">
+        Developed & Maintained by<br />
+        <strong>Himpower Pvt. Ltd.</strong><br />
+        © 2024 All Rights Reserved
+    </footer>
 );
 
 // --- FEATURE COMPONENTS ---
@@ -453,6 +464,7 @@ const ParentDashboard = ({ parent, school, onLogout }) => {
                     { id: 'Calendar', icon: '📅', label: 'Calendar' }
                 ]} 
             />
+            <CompanyFooter />
         </div>
     );
 };
@@ -489,6 +501,7 @@ const StudentDashboard = ({ student, school, onLogout }) => {
                     { id: 'Calendar', icon: '📅', label: 'Calendar' }
                 ]} 
             />
+            <CompanyFooter />
         </div>
     );
 };
@@ -609,6 +622,7 @@ const TeacherDashboard = ({ teacher, school, onLogout }) => {
                     { id: 'Calendar', icon: '📅', label: 'Calendar' }
                 ]} 
             />
+            <CompanyFooter />
         </div>
     );
 };
@@ -735,6 +749,7 @@ const AdminDashboard = ({ admin, school, onLogout }) => {
                     { id: 'Reports', icon: '🎓', label: 'Reports' }
                 ]} 
             />
+            <CompanyFooter />
         </div>
     );
 };
@@ -810,6 +825,10 @@ const MagicLinkLogin = ({ onLogin }) => {
                 <button type="submit" className="form-button">Sign In</button>
                 {error && <p className="error-message">{error}</p>}
             </form>
+
+            <div className="powered-by">
+                Developed by <strong>Himpower Pvt. Ltd.</strong>
+            </div>
             
             <div className="demo-accounts">
                 <div style={{fontWeight: '700', marginBottom: '0.5rem', color: '#333'}}>Life-Prep Academy Demo Accounts:</div>

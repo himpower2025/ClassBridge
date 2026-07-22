@@ -18,15 +18,124 @@
   --card-radius: 24px;
 }
 
+/* --- Mobile Safe Area Padding --- */
 body {
   margin: 0;
-  font-family: 'Roboto', sans-serif;
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   background-color: var(--background-color);
   color: var(--text-color);
   -webkit-font-smoothing: antialiased;
-  padding-bottom: 110px; /* Space for floating nav */
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: calc(110px + env(safe-area-inset-bottom, 0px));
   overflow-x: hidden;
 }
+
+/* --- Notification & Header Actions --- */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.icon-badge-btn {
+  background: white; border: 1px solid #eee; border-radius: 50%;
+  width: 38px; height: 38px; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 1.1rem; color: #555; box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  position: relative; transition: transform 0.2s, background-color 0.2s;
+}
+.icon-badge-btn:active { transform: scale(0.92); }
+.notification-dot {
+  position: absolute; top: 2px; right: 2px;
+  width: 10px; height: 10px; background-color: #E74C3C;
+  border-radius: 50%; border: 2px solid white;
+}
+
+/* --- Offline Bar --- */
+.offline-banner {
+  background: #E74C3C; color: white; text-align: center;
+  padding: 6px 12px; font-size: 0.8rem; font-weight: 600;
+  position: sticky; top: 0; z-index: 1000; display: flex; align-items: center; justify-content: center; gap: 6px;
+}
+
+/* --- Modals & Overlay --- */
+.modal-overlay {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.45); backdrop-filter: blur(4px);
+  z-index: 2000; display: flex; align-items: center; justify-content: center;
+  padding: 1rem; animation: fadeInModal 0.2s ease-out;
+}
+@keyframes fadeInModal {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+.modal-card {
+  background: white; border-radius: 24px; padding: 1.5rem;
+  width: 100%; max-width: 480px; max-height: 85vh; overflow-y: auto;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.2); position: relative;
+}
+.modal-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 1rem; padding-bottom: 0.8rem; border-bottom: 1px solid #f0f0f0;
+}
+.modal-header h3 { margin: 0; font-size: 1.2rem; color: #333; }
+.close-modal-btn {
+  background: #f5f5f7; border: none; width: 32px; height: 32px;
+  border-radius: 50%; cursor: pointer; font-size: 1rem; color: #666;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* --- Notification Items & Toggles --- */
+.notification-item {
+  padding: 12px; border-radius: 14px; background: #f9f9fb;
+  margin-bottom: 8px; border-left: 4px solid var(--primary-color);
+  transition: background 0.2s;
+}
+.notification-item.unread { background: #eef5fc; font-weight: 500; }
+.notification-item .time { font-size: 0.7rem; color: #888; margin-top: 4px; }
+
+.toggle-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 12px 0; border-bottom: 1px solid #f0f0f0;
+}
+.toggle-switch {
+  position: relative; display: inline-block; width: 46px; height: 26px;
+}
+.toggle-switch input { opacity: 0; width: 0; height: 0; }
+.slider {
+  position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+  background-color: #ccc; transition: .3s; border-radius: 26px;
+}
+.slider:before {
+  position: absolute; content: ""; height: 20px; width: 20px; left: 3px; bottom: 3px;
+  background-color: white; transition: .3s; border-radius: 50%;
+}
+input:checked + .slider { background-color: var(--primary-color); }
+input:checked + .slider:before { transform: translateX(20px); }
+
+/* --- App Store Readiness Card --- */
+.store-readiness-card {
+  background: linear-gradient(135deg, #4A90E2 0%, #2A60C2 100%);
+  color: white; border-radius: 20px; padding: 1.2rem; margin: 0 var(--app-padding) 1.25rem;
+  box-shadow: 0 8px 24px rgba(74, 144, 226, 0.25);
+}
+.store-readiness-card h4 { margin: 0 0 6px 0; font-size: 1.05rem; display: flex; align-items: center; gap: 6px; }
+.store-readiness-card p { margin: 0 0 12px 0; font-size: 0.82rem; opacity: 0.9; line-height: 1.4; }
+.status-pill {
+  display: inline-block; padding: 3px 8px; border-radius: 12px;
+  font-size: 0.72rem; font-weight: 700; background: rgba(255,255,255,0.25); color: white;
+}
+.status-pill.success { background: #2ECC71; }
+.status-pill.warning { background: #F39C12; }
+
+/* --- Policy Links --- */
+.policy-footer-links {
+  display: flex; justify-content: center; gap: 12px; margin-top: 8px;
+  font-size: 0.75rem; color: #888;
+}
+.policy-link-btn {
+  background: none; border: none; color: var(--primary-color);
+  text-decoration: underline; cursor: pointer; font-size: 0.75rem; padding: 0;
+}
+
 
 /* --- Layout Container --- */
 .dashboard-container {

@@ -1,9 +1,7 @@
-
-const CACHE_NAME = 'classbridge-cache-v12';
+const CACHE_NAME = 'classbridge-cache-v15';
 const urlsToCache = [
   '/',
   '/index.html',
-  '/index.css',
   '/manifest.json',
   '/logo.svg'
 ];
@@ -12,8 +10,8 @@ self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
-        console.log('[SW] Caching app shell');
-        return cache.addAll(urlsToCache);
+        console.log('[ClassBridge SW] Caching app shell');
+        return Promise.allSettled(urlsToCache.map(url => cache.add(url)));
       })
       .then(() => self.skipWaiting())
   );
@@ -21,30 +19,33 @@ self.addEventListener('install', event => {
 
 self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
+  if (!event.request.url.startsWith('http')) return;
+
   event.respondWith(
     fetch(event.request)
       .then(response => {
-        if (!response || response.status !== 200 || response.type !== 'basic') {
-          return response;
+        if (response && response.status === 200 && response.type === 'basic') {
+          const responseToCache = response.clone();
+          caches.open(CACHE_NAME).then(cache => {
+            cache.put(event.request, responseToCache);
+          });
         }
-        const responseToCache = response.clone();
-        caches.open(CACHE_NAME).then(cache => {
-          cache.put(event.request, responseToCache);
-        });
         return response;
       })
-      .catch(() => caches.match(event.request).then(cached => cached || caches.match('/')))
+      .catch(() => {
+        return caches.match(event.request).then(cached => {
+          return cached || caches.match('/') || new Response('Offline', { status: 503, headers: { 'Content-Type': 'text/plain' } });
+        });
+      })
   );
 });
 
 self.addEventListener('activate', event => {
-  const cacheWhitelist = [CACHE_NAME];
   event.waitUntil(
     caches.keys().then(cacheNames => {
       return Promise.all(
         cacheNames.map(cacheName => {
-          if (cacheWhitelist.indexOf(cacheName) === -1) {
-            console.log('[SW] Deleting old cache:', cacheName);
+          if (cacheName !== CACHE_NAME) {
             return caches.delete(cacheName);
           }
         })
@@ -53,7 +54,6 @@ self.addEventListener('activate', event => {
   );
 });
 
-// --- PUSH & LOCAL NOTIFICATIONS FOR APP STORE COMPLIANCE ---
 self.addEventListener('push', event => {
   let data = { title: 'ClassBridge Notification', body: 'You have a new school update.', url: '/' };
   try {
@@ -68,12 +68,10 @@ self.addEventListener('push', event => {
 
   const options = {
     body: data.body,
-    icon: '/icon-192.png',
-    badge: '/icon-192.png',
+    icon: '/logo.svg',
+    badge: '/logo.svg',
     vibrate: [100, 50, 100],
-    data: {
-      url: data.url || '/'
-    }
+    data: { url: data.url || '/' }
   };
 
   event.waitUntil(
@@ -99,17 +97,15 @@ self.addEventListener('notificationclick', event => {
   );
 });
 
-// Client postMessage interface for immediate simulated notifications
 self.addEventListener('message', event => {
   if (event.data && event.data.type === 'TRIGGER_NOTIFICATION') {
     const { title, body, tag } = event.data;
     self.registration.showNotification(title || 'ClassBridge Notification', {
       body: body || 'You have received a new notification.',
-      icon: '/icon-192.png',
-      badge: '/icon-192.png',
+      icon: '/logo.svg',
+      badge: '/logo.svg',
       tag: tag || 'classbridge-notice',
       vibrate: [200, 100, 200]
     });
   }
 });
-

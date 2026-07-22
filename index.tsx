@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
+import './index.css';
 
 console.log("ClassBridge App Starting... ESM React Version:", React.version);
 

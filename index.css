@@ -1,5 +1,5 @@
 
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,700&family=Quicksand:wght@500;600;700&display=swap');
 
 /* --- Global Reset & Base --- */
 *, *::before, *::after {
@@ -24,13 +24,17 @@
 /* --- Mobile & Safe Area Padding --- */
 body {
   margin: 0;
-  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   background-color: var(--background-color);
   color: var(--text-color);
   -webkit-font-smoothing: antialiased;
   padding-top: env(safe-area-inset-top, 0px);
   padding-bottom: calc(110px + env(safe-area-inset-bottom, 0px));
   overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6, .welcome-title, .school-name-text, .form-button, .action-btn, .save-btn, .download-btn, .nav-item {
+  font-family: 'Quicksand', 'Nunito', -apple-system, sans-serif;
 }
 
 /* --- Notification & Header Actions --- */
@@ -383,11 +387,11 @@ input:focus, select:focus, textarea:focus { border-color: var(--primary-color); 
 .rc-info h4 { margin: 0 0 4px 0; font-size: 1.05rem; font-weight: 700; color: #0F172A; }
 .download-btn { background: #0F172A; color: white; border: none; padding: 9px 16px; border-radius: 12px; cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: background 0.2s; }
 .download-btn:hover { background: #334155; }
-.paper-preview { background: #fff; border: 1px solid #E2E8F0; padding: 1.75rem; margin-top: 1rem; border-radius: 16px; font-family: 'Times New Roman', serif; position: relative; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.05); }
+.paper-preview { background: #fff; border: 1px solid #E2E8F0; padding: 1.75rem; margin-top: 1rem; border-radius: 16px; font-family: 'Nunito', -apple-system, sans-serif; position: relative; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.05); }
 .paper-preview::before { content: ''; position: absolute; top: 0; left: 0; width: 5px; height: 100%; background: #EF4444; }
 .grade-table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.95rem; }
 .grade-table th, .grade-table td { border-bottom: 1px solid #E2E8F0; padding: 10px 6px; text-align: left; }
-.grade-table th { font-family: 'Plus Jakarta Sans', sans-serif; color: #64748B; font-size: 0.8rem; text-transform: uppercase; font-weight: 700; }
+.grade-table th { font-family: 'Quicksand', 'Nunito', sans-serif; color: #64748B; font-size: 0.8rem; text-transform: uppercase; font-weight: 700; }
 
 /* --- Admin --- */
 .admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; padding: 0 var(--app-padding); margin-bottom: 1.5rem; }

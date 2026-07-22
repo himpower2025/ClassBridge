@@ -220,7 +220,7 @@ const OfflineBanner = () => {
     );
 };
 
-const CleanHeader = ({ school, onLogout, onOpenNotifications, onOpenReadiness, unreadCount }) => (
+const CleanHeader = ({ school, onLogout, onOpenNotifications, onOpenReadiness, unreadCount, role }) => (
     <header className="dashboard-header">
         <div className="header-left">
             <SchoolLogo logoUrl={school?.logoUrl} schoolName={school?.name || 'School'} />
@@ -234,9 +234,11 @@ const CleanHeader = ({ school, onLogout, onOpenNotifications, onOpenReadiness, u
                 🔔
                 {unreadCount > 0 && <span className="notification-dot" />}
             </button>
-            <button onClick={onOpenReadiness} className="icon-badge-btn" aria-label="Store Readiness" title="App Store Readiness Audit">
-                🛡️
-            </button>
+            {role === 'Administrator' && (
+                <button onClick={onOpenReadiness} className="icon-badge-btn" aria-label="Store Readiness" title="App Store Readiness Audit">
+                    🛡️
+                </button>
+            )}
             <button onClick={onLogout} className="logout-icon-btn" aria-label="Logout" title="Logout">⏻</button>
         </div>
     </header>
@@ -491,7 +493,7 @@ const LegalModal = ({ type, onClose }) => {
     );
 };
 
-const CompanyFooter = ({ onOpenLegal, onOpenReadiness }: { onOpenLegal?: (t: 'privacy' | 'terms') => void; onOpenReadiness?: () => void; }) => (
+const CompanyFooter = ({ onOpenLegal }: { onOpenLegal?: (t: 'privacy' | 'terms') => void; onOpenReadiness?: () => void; }) => (
     <footer className="company-footer">
         Developed & Maintained by<br />
         <strong>Himpower Pvt. Ltd.</strong><br />
@@ -502,12 +504,6 @@ const CompanyFooter = ({ onOpenLegal, onOpenReadiness }: { onOpenLegal?: (t: 'pr
                 <button className="policy-link-btn" onClick={() => onOpenLegal('privacy')}>Privacy Policy</button>
                 <span>•</span>
                 <button className="policy-link-btn" onClick={() => onOpenLegal('terms')}>Terms of Service</button>
-                {onOpenReadiness && (
-                    <>
-                        <span>•</span>
-                        <button className="policy-link-btn" onClick={onOpenReadiness}>App Store Audit</button>
-                    </>
-                )}
             </div>
         )}
     </footer>
@@ -711,7 +707,7 @@ const ParentDashboard = ({ parent, school, onLogout, onOpenNotifications, onOpen
 
     return (
         <div className="dashboard-container">
-            <CleanHeader school={school} onLogout={onLogout} onOpenNotifications={onOpenNotifications} onOpenReadiness={onOpenReadiness} unreadCount={unreadCount} />
+            <CleanHeader school={school} role="Parent" onLogout={onLogout} onOpenNotifications={onOpenNotifications} onOpenReadiness={onOpenReadiness} unreadCount={unreadCount} />
             <WelcomeSection userName={parent.name} role="Parent" />
 
             {activeTab === 'Children' && (
@@ -752,7 +748,7 @@ const StudentDashboard = ({ student, school, onLogout, onOpenNotifications, onOp
 
     return (
         <div className="dashboard-container">
-            <CleanHeader school={school} onLogout={onLogout} onOpenNotifications={onOpenNotifications} onOpenReadiness={onOpenReadiness} unreadCount={unreadCount} />
+            <CleanHeader school={school} role="Student" onLogout={onLogout} onOpenNotifications={onOpenNotifications} onOpenReadiness={onOpenReadiness} unreadCount={unreadCount} />
             <WelcomeSection userName={student.name} role="Student" />
 
             {activeTab === 'Home' && (
@@ -869,7 +865,7 @@ const TeacherDashboard = ({ teacher, school, onLogout, onOpenNotifications, onOp
 
     return (
         <div className="dashboard-container">
-            <CleanHeader school={school} onLogout={onLogout} onOpenNotifications={onOpenNotifications} onOpenReadiness={onOpenReadiness} unreadCount={unreadCount} />
+            <CleanHeader school={school} role="Teacher" onLogout={onLogout} onOpenNotifications={onOpenNotifications} onOpenReadiness={onOpenReadiness} unreadCount={unreadCount} />
             <WelcomeSection userName={teacher.name} role="Teacher" />
 
             {activeTab === 'Students' && (
@@ -921,7 +917,7 @@ const AdminDashboard = ({ admin, school, onLogout, onOpenNotifications, onOpenRe
 
     return (
         <div className="dashboard-container">
-            <CleanHeader school={school} onLogout={onLogout} onOpenNotifications={onOpenNotifications} onOpenReadiness={onOpenReadiness} unreadCount={unreadCount} />
+            <CleanHeader school={school} role="Administrator" onLogout={onLogout} onOpenNotifications={onOpenNotifications} onOpenReadiness={onOpenReadiness} unreadCount={unreadCount} />
             <div className="welcome-section">
                 <h1 className="welcome-title">Admin Console<br/><strong>{school.name}</strong></h1>
             </div>
@@ -1185,6 +1181,7 @@ const App = () => {
 
     const commonProps = {
         school,
+        role,
         onLogout: handleLogout,
         onOpenNotifications: () => setIsNotificationOpen(true),
         onOpenReadiness: () => setIsReadinessOpen(true),
